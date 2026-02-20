@@ -1,23 +1,25 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" version="29.3.8">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.5.0">
   <diagram name="Page-1" id="e7e014a7-5840-1c2e-5031-d8a46d1fe8dd">
-    <mxGraphModel dx="1348" dy="692" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="826" background="none" math="0" shadow="0">
+    <mxGraphModel dx="1733" dy="890" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="826" background="none" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="IoFGISJUYMX9QcFm3xg8-41" parent="1" style="ellipse;html=1;shape=endState;fillColor=light-dark(#000000,#000000);strokeColor=light-dark(#000000,#000000);" value="" vertex="1">
           <mxGeometry height="30" width="30" x="462.5" y="1040" as="geometry" />
         </mxCell>
-        <mxCell id="IoFGISJUYMX9QcFm3xg8-53" edge="1" parent="1" source="IoFGISJUYMX9QcFm3xg8-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="IoFGISJUYMX9QcFm3xg8-87">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="IoFGISJUYMX9QcFm3xg8-53" edge="1" parent="1" source="IoFGISJUYMX9QcFm3xg8-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="IoFGISJUYMX9QcFm3xg8-45">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="392.5" y="140" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="IoFGISJUYMX9QcFm3xg8-42" parent="1" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=light-dark(#000000,#000000);" value="" vertex="1">
-          <mxGeometry height="30" width="30" x="377.5" y="80" as="geometry" />
+          <mxGeometry height="30" width="30" x="377.5" y="220" as="geometry" />
         </mxCell>
         <mxCell id="IoFGISJUYMX9QcFm3xg8-94" edge="1" parent="1" source="IoFGISJUYMX9QcFm3xg8-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="IoFGISJUYMX9QcFm3xg8-46">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="IoFGISJUYMX9QcFm3xg8-45" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="User establishes a session" vertex="1">
-          <mxGeometry height="60" width="120" x="235" y="280" as="geometry" />
+          <mxGeometry height="60" width="120" x="332.5" y="310" as="geometry" />
         </mxCell>
         <mxCell id="IoFGISJUYMX9QcFm3xg8-95" edge="1" parent="1" source="IoFGISJUYMX9QcFm3xg8-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="IoFGISJUYMX9QcFm3xg8-47">
           <mxGeometry relative="1" as="geometry" />
@@ -84,7 +86,7 @@
         <mxCell id="IoFGISJUYMX9QcFm3xg8-114" edge="1" parent="1" source="IoFGISJUYMX9QcFm3xg8-61" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="IoFGISJUYMX9QcFm3xg8-62">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="IoFGISJUYMX9QcFm3xg8-61" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="User adds repetition, weight and set information for an exercise" vertex="1">
+        <mxCell id="IoFGISJUYMX9QcFm3xg8-61" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="User adds repetition and weight information for an exercise" vertex="1">
           <mxGeometry height="60" width="120" x="377.5" y="590" as="geometry" />
         </mxCell>
         <mxCell id="IoFGISJUYMX9QcFm3xg8-65" edge="1" parent="1" source="IoFGISJUYMX9QcFm3xg8-62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="IoFGISJUYMX9QcFm3xg8-61">
@@ -160,7 +162,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="IoFGISJUYMX9QcFm3xg8-79" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Does the user have internet connection" vertex="1">
+        <mxCell id="IoFGISJUYMX9QcFm3xg8-79" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Does the user have internet connection?" vertex="1">
           <mxGeometry height="75" width="80" x="437.5" y="737.5" as="geometry" />
         </mxCell>
         <mxCell id="IoFGISJUYMX9QcFm3xg8-83" edge="1" parent="1" source="IoFGISJUYMX9QcFm3xg8-80" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="IoFGISJUYMX9QcFm3xg8-41">
@@ -182,31 +184,6 @@
           <mxGeometry relative="1" x="-0.4826" y="-1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
-        </mxCell>
-        <mxCell id="IoFGISJUYMX9QcFm3xg8-89" edge="1" parent="1" source="IoFGISJUYMX9QcFm3xg8-87" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="IoFGISJUYMX9QcFm3xg8-45">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="IoFGISJUYMX9QcFm3xg8-90" connectable="0" parent="IoFGISJUYMX9QcFm3xg8-89" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Yes" vertex="1">
-          <mxGeometry relative="1" x="-0.5571" y="-1" as="geometry">
-            <mxPoint as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="IoFGISJUYMX9QcFm3xg8-91" edge="1" parent="1" source="IoFGISJUYMX9QcFm3xg8-87" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="IoFGISJUYMX9QcFm3xg8-88">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="IoFGISJUYMX9QcFm3xg8-92" connectable="0" parent="IoFGISJUYMX9QcFm3xg8-91" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="No" vertex="1">
-          <mxGeometry relative="1" x="-0.6633" y="1" as="geometry">
-            <mxPoint as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="IoFGISJUYMX9QcFm3xg8-87" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Does the user have internet connection?" vertex="1">
-          <mxGeometry height="90" width="90" x="347.5" y="140" as="geometry" />
-        </mxCell>
-        <mxCell id="IoFGISJUYMX9QcFm3xg8-93" edge="1" parent="1" source="IoFGISJUYMX9QcFm3xg8-88" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="IoFGISJUYMX9QcFm3xg8-46">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="IoFGISJUYMX9QcFm3xg8-88" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Enter offline mode" vertex="1">
-          <mxGeometry height="60" width="120" x="430" y="280" as="geometry" />
         </mxCell>
         <mxCell id="IoFGISJUYMX9QcFm3xg8-100" edge="1" parent="1" source="IoFGISJUYMX9QcFm3xg8-96" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="IoFGISJUYMX9QcFm3xg8-99">
           <mxGeometry relative="1" as="geometry" />
