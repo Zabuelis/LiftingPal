@@ -4,5 +4,6 @@ export const Colors = {
     accentText: '#1A7A4A',
     surface: '#FFFFFF',
     theme: '#D4820A',
-    accentTheme: '#FEF3E2'
+    accentTheme: '#FEF3E2',
+    buttonPress: '#f2a83a'
 }

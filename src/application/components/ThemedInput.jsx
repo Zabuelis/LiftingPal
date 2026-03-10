@@ -1,13 +1,12 @@
-import { Text} from "react-native"
-import { Colors } from '../constants/Colors'
+import { TextInput } from "react-native"
 
 const ThemedText = ({ style, bold, theme, ...props }) => {
 
     return(
-        <Text
+        
+        <TextInput
             style={[{
                 fontFamily: bold ? 'DMSans_700Bold' : 'DMSans_400Regular',
-                color: theme ? Colors.theme : Colors.text,
             }, style]} {...props}
         />
     )
