@@ -7,16 +7,20 @@ import ScrollablePage from '../components/ScrollablePage'
 import ThemedText from '../components/ThemedText'
 import PressableButton from '../components/ButtonPressable'
 import ThemedInput from '../components/ThemedInput'
+import { useUser } from '../hooks/useUser'
 
 
 const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
+    const { user } = useUser()
+
     function handleSubmit(){
         // if(email != '' || password != '' ||){
 
         // }
+        console.log("Current user: ", user)
         console.log("Login form", email, password)
     }
 
