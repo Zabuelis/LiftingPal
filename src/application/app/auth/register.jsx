@@ -2,24 +2,51 @@ import { View, KeyboardAvoidingView } from 'react-native'
 import { useState } from 'react'
 import { Link } from 'expo-router'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Colors } from '../constants/Colors'
-import ScrollablePage from '../components/ScrollablePage'
-import ThemedText from '../components/ThemedText'
-import PressableButton from '../components/ButtonPressable'
-import ThemedInput from '../components/ThemedInput'
+import { Colors } from '../../constants/Colors'
+import ScrollablePage from '../../components/ScrollablePage'
+import ThemedText from '../../components/ThemedText'
+import PressableButton from '../../components/ButtonPressable'
+import ThemedInput from '../../components/ThemedInput'
+import { useUser } from '../../hooks/useUser'
 
 
 const Register = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [repPassword, setRepPassword] = useState('')
+    const [password_confirmation, setPasswordConfirmation] = useState('')
     const [name, setName] = useState('')
+    const [errors, setErrors] = useState({})
 
-    function handleSubmit(){
-        // if(email != '' || password != '' ||){
+    const { register } = useUser()
 
-        // }
-        console.log("Register form", email, name, password, repPassword)
+    const validateRegister = () => {
+        let errors = {}
+        if(!email) errors.email = "Email is required."
+        if(!name) errors.name = "Name is required."
+        if(!password || !password_confirmation) errors.password = "Password is required."
+        if(password.length < 8) errors.password = "Password length minimum 8 symbols."
+        if(password != password_confirmation) errors.password_confirmation = "Passwords must match."
+
+        setErrors(errors)
+
+        return Object.keys(errors).length === 0;
+    }
+
+    async function handleSubmit () {
+        if(validateRegister()){
+            try {
+                await register(name, email, password, password_confirmation)
+                console.log("Submitted", name, email, password, password_confirmation)
+                setEmail("")
+                setName("")
+                setPassword("")
+                setPasswordConfirmation("")
+                setErrors({})
+            } catch (error) {
+                console.log(error)
+            }
+            
+        }
     }
 
     return (
@@ -52,6 +79,9 @@ const Register = () => {
                             style={{backgroundColor: Colors.surface}} 
                             className="w-full rounded-[4vw] focus:border-amber-500 h-16 border-gray-300 border-2">
                             </ThemedInput>
+                            {
+                                errors.email ? <ThemedText bold style={{ color: Colors.errorText }} className="w-full text-left"> {errors.email} </ThemedText> : null
+                            }
                     </View>
                     <ThemedText className="opacity-65 text-md pb-1">NAME</ThemedText>
                     <View className="flex items-center pb-6">
@@ -62,9 +92,12 @@ const Register = () => {
                             style={{backgroundColor: Colors.surface}} 
                             className="w-full rounded-[4vw] focus:border-amber-500 h-16 border-gray-300 border-2">
                             </ThemedInput>
+                            {
+                                errors.name ? <ThemedText bold style={{ color: Colors.errorText }} className="w-full text-left"> {errors.name} </ThemedText> : null
+                            }
                     </View>
                     <ThemedText className="opacity-65 text-md pb-1">PASSWORD</ThemedText>
-                    <View className="flex items-center pb-2">
+                    <View className="flex items-center pb-6">
                         <ThemedInput 
                         placeholder='Password'
                         secureTextEntry={true}
@@ -73,17 +106,23 @@ const Register = () => {
                         style={{backgroundColor: Colors.surface}} 
                         className="w-full focus:border-amber-500 rounded-[4vw] h-16 border-gray-300 border-2">
                         </ThemedInput>
+                        {
+                            errors.password ? <ThemedText bold style={{ color: Colors.errorText }} className="w-full text-left"> {errors.password} </ThemedText> : null
+                        }
                     </View>
                     <ThemedText className="opacity-65 text-md pb-1">REPEAT PASSWORD</ThemedText>
-                    <View className="flex items-center pb-2">
+                    <View className="flex items-center pb-6">
                         <ThemedInput 
                         placeholder='Password'
                         secureTextEntry={true}
-                        onChangeText={setRepPassword}
-                        value={repPassword}
+                        onChangeText={setPasswordConfirmation}
+                        value={password_confirmation}
                         style={{backgroundColor: Colors.surface}} 
                         className="w-full focus:border-amber-500 rounded-[4vw] h-16 border-gray-300 border-2">
                         </ThemedInput>
+                        {
+                            errors.password_confirmation ? <ThemedText bold style={{ color: Colors.errorText }} className="w-full text-left"> {errors.password_confirmation} </ThemedText> : null
+                        }
                     </View>
                     <ThemedText theme className="pb-4 text-right">
                         <Link href="/">Forgot password?</Link>
@@ -95,9 +134,9 @@ const Register = () => {
                         </PressableButton>
                     </View>
             </View>
-            <ThemedText className="text-center pt-4 pb-12">
+            <ThemedText className="text-center pt-4 pb-24">
                 Already have an accout?
-                <Link href="/login" style={{color: Colors.theme}}> Login here.</Link>
+                <Link href="/auth/login" style={{color: Colors.theme}}> Login here.</Link>
             </ThemedText>
         </ScrollablePage>
     )

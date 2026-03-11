@@ -2,26 +2,35 @@ import { View, KeyboardAvoidingView } from 'react-native'
 import { useState } from 'react'
 import { Link } from 'expo-router'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Colors } from '../constants/Colors'
-import ScrollablePage from '../components/ScrollablePage'
-import ThemedText from '../components/ThemedText'
-import PressableButton from '../components/ButtonPressable'
-import ThemedInput from '../components/ThemedInput'
-import { useUser } from '../hooks/useUser'
+import { Colors } from '../../constants/Colors'
+import ScrollablePage from '../../components/ScrollablePage'
+import ThemedText from '../../components/ThemedText'
+import PressableButton from '../../components/ButtonPressable'
+import ThemedInput from '../../components/ThemedInput'
 
 
 const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [errors, setErrors] = useState({})
 
-    const { user } = useUser()
+    const validateLogin = () => {
+        let errors = {}
+        if(!email) errors.email = "Email is required."
+        if(!password) errors.password = "Password is required."
+
+        setErrors(errors)
+
+        return Object.keys(errors).length === 0;
+    }
 
     function handleSubmit(){
-        // if(email != '' || password != '' ||){
-
-        // }
-        console.log("Current user: ", user)
-        console.log("Login form", email, password)
+        if(validateLogin()){
+            console.log("Submitted", email, password)
+            setEmail("")
+            setPassword("")
+            setErrors({})
+        }
     }
 
     return (
@@ -54,6 +63,9 @@ const Login = () => {
                             style={{backgroundColor: Colors.surface}} 
                             className="w-full rounded-[4vw] focus:border-amber-500 h-16 border-gray-300 border-2">
                             </ThemedInput>
+                            {
+                                errors.email ? <ThemedText bold style={{ color: Colors.errorText }} className="w-full text-left"> {errors.email} </ThemedText> : null
+                            }
                     </View>
                     <ThemedText className="opacity-65 text-md pb-1">PASSWORD</ThemedText>
                     <View className="flex items-center pb-2">
@@ -65,6 +77,9 @@ const Login = () => {
                         style={{backgroundColor: Colors.surface}} 
                         className="w-full focus:border-amber-500 rounded-[4vw] h-16 border-gray-300 border-2">
                         </ThemedInput>
+                        {
+                            errors.password ? <ThemedText bold style={{ color: Colors.errorText }} className="w-full text-left"> {errors.password} </ThemedText> : null
+                        }
                     </View>
                     <ThemedText theme className="pb-8 text-right">
                         <Link href="/">Forgot password?</Link>
@@ -78,7 +93,7 @@ const Login = () => {
             </View>
             <ThemedText className="text-center pt-4">
                 No account?
-                <Link href="/register" style={{color: Colors.theme}}> Sign up for free now.</Link>
+                <Link href="/auth/register" style={{color: Colors.theme}}> Sign up for free now.</Link>
             </ThemedText>
         </ScrollablePage>
     )

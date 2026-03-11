@@ -9,14 +9,21 @@ const RootLayout = () => {
         DMSans_400Regular,
         DMSans_700Bold
     })
+
+    const isLoggedIn = false
+
     return(
         <UserProvider>
             <Stack screenOptions={{
                 headerStyle: { backgroundColor: Colors.accentTheme}
             }}>
-                <Stack.Screen name="index" options={{ title: 'Home' }}></Stack.Screen>
-                <Stack.Screen name="login" options={{title: 'Login'}}></Stack.Screen>
-                <Stack.Screen name="register" options={{title: 'Register'}}></Stack.Screen>
+                <Stack.Protected guard={!isLoggedIn}>
+                    <Stack.Screen name="auth/login" options={{title: 'Login'}}></Stack.Screen>
+                    <Stack.Screen name="auth/register" options={{title: 'Register'}}></Stack.Screen>
+                </Stack.Protected>
+                <Stack.Protected guard={isLoggedIn}>
+                    <Stack.Screen name="index" options={{ title: 'Home' }}></Stack.Screen>
+                </Stack.Protected>
             </Stack>
         </UserProvider>
     )

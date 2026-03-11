@@ -5,5 +5,6 @@ export const Colors = {
     surface: '#FFFFFF',
     theme: '#D4820A',
     accentTheme: '#FEF3E2',
-    buttonPress: '#f2a83a'
+    buttonPress: '#f2a83a',
+    errorText: '#FF0000'
 }

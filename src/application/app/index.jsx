@@ -8,7 +8,7 @@ const Home = () => {
         <ThemedView className="flex-1 items-center justify-center">
             <Text className="text-xl font-bold text-blue-500">
                 Welcome to Nativewind!
-                <Link href="/login">Go to login</Link>
+                <Link href="/auth/login">Go to login</Link>
             </Text>
         </ThemedView>
     )
