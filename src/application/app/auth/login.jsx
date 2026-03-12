@@ -7,6 +7,7 @@ import ScrollablePage from '../../components/ScrollablePage'
 import ThemedText from '../../components/ThemedText'
 import PressableButton from '../../components/ButtonPressable'
 import ThemedInput from '../../components/ThemedInput'
+import { useUser } from '../../hooks/useUser'
 
 
 const Login = () => {
@@ -14,7 +15,10 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const [errors, setErrors] = useState({})
 
-    const validateLogin = () => {
+    const [webMessageError, setWebMessageError] = useState(null)
+    const { login } = useUser({})
+
+    function validateLogin() {
         let errors = {}
         if(!email) errors.email = "Email is required."
         if(!password) errors.password = "Password is required."
@@ -24,12 +28,17 @@ const Login = () => {
         return Object.keys(errors).length === 0;
     }
 
-    function handleSubmit(){
-        if(validateLogin()){
-            console.log("Submitted", email, password)
+    async function handleSubmit(){
+        setWebMessageError(null)
+        try {
+            if(validateLogin()){
+            await login(email, password)
             setEmail("")
             setPassword("")
             setErrors({})
+        }   
+        } catch (error) {
+            setWebMessageError(error.message)
         }
     }
 
@@ -54,6 +63,12 @@ const Login = () => {
                 </View>
             </LinearGradient>
             <View className="pt-8 px-6">
+                    {webMessageError ? 
+                        <ThemedText bold style={{ color: Colors.errorText }} className="text-lg"> 
+                            { webMessageError } 
+                        </ThemedText> 
+                        : null
+                    }
                     <ThemedText className="opacity-65 text-md pb-1">EMAIL ADDRESS</ThemedText>
                     <View className="flex items-center pb-6">
                             <ThemedInput 

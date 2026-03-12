@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import api from '../lib/axios'
 import * as SecureStore from 'expo-secure-store';
 
@@ -6,16 +6,17 @@ export const UserContext = createContext()
 
 export function UserProvider({ children }){
     const [user, setUser] = useState()
+    const [authChecked, setAuthChecked] = useState(false)
 
     async function login(email, password) {
         try {
-            const response = await api.post('/login',{
+            const response = await api.post('/login', {
                 email, password
             })
             await SecureStore.setItemAsync('liftingPalToken', response.data.token)
             setUser(response.data.user)
         } catch (error) {
-            console.log(error.message)
+            throw Error(error.message)
         }
     }
 
@@ -27,7 +28,7 @@ export function UserProvider({ children }){
             await SecureStore.setItemAsync('liftingPalToken', response.data.token)
             setUser(response.data.user)
         } catch (error) {
-            console.log(error.message)
+            throw Error(error.message)
         }
     }
 
@@ -37,12 +38,27 @@ export function UserProvider({ children }){
             await SecureStore.deleteItemAsync('liftingPalToken')
             setUser(null)
         } catch (error) {
-            console.log(error.message)
+            throw Error(error.message)
         }
     }
 
+    async function getInitialUserValue() {
+        try {
+            const response = await api.get('/getUserData')
+            setUser(response)
+        } catch (error) {
+            setUser(null)
+        } finally {
+            setAuthChecked(true)
+        }
+    }
+
+    useEffect(() => {
+        getInitialUserValue()
+    }, [])
+
     return(
-        <UserContext.Provider value={{ user, login, register, logout }}>
+        <UserContext.Provider value={{ user, login, register, logout, authChecked }}>
             { children }
         </UserContext.Provider>
     )

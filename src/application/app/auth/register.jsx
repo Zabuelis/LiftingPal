@@ -17,7 +17,8 @@ const Register = () => {
     const [name, setName] = useState('')
     const [errors, setErrors] = useState({})
 
-    const { register } = useUser()
+    const {register} = useUser()
+    const [webMessageError, setWebMessageError] = useState(null)
 
     const validateRegister = () => {
         let errors = {}
@@ -33,6 +34,7 @@ const Register = () => {
     }
 
     async function handleSubmit () {
+        setWebMessageError(null)
         if(validateRegister()){
             try {
                 await register(name, email, password, password_confirmation)
@@ -43,7 +45,7 @@ const Register = () => {
                 setPasswordConfirmation("")
                 setErrors({})
             } catch (error) {
-                console.log(error)
+                setWebMessageError(error.message)
             }
             
         }
@@ -70,6 +72,12 @@ const Register = () => {
                 </View>
             </LinearGradient>
             <View className="pt-8 px-6">
+                    {webMessageError ? 
+                        <ThemedText bold style={{ color: Colors.errorText }} className="text-lg"> 
+                            { webMessageError } 
+                        </ThemedText> 
+                        : null
+                    }
                     <ThemedText className="opacity-65 text-md pb-1">EMAIL ADDRESS</ThemedText>
                     <View className="flex items-center pb-6">
                             <ThemedInput 
