@@ -10,9 +10,10 @@ class UserController extends Controller
     public function show(){
         $user = Auth::user();
 
-        return [
+        return response([
             'user' => $user
-        ];
+        ]);
     }
 }
+
 
