@@ -16,7 +16,8 @@ export function UserProvider({ children }){
             await SecureStore.setItemAsync('liftingPalToken', response.data.token)
             setUser(response.data.user)
         } catch (error) {
-            throw Error(error.message)
+            const message = handleErrorResponse(error)
+            throw new Error(message)
         }
     }
 
@@ -28,7 +29,8 @@ export function UserProvider({ children }){
             await SecureStore.setItemAsync('liftingPalToken', response.data.token)
             setUser(response.data.user)
         } catch (error) {
-            throw Error(error.message)
+            const message = handleErrorResponse(error)
+            throw new Error(message)
         }
     }
 
@@ -38,7 +40,8 @@ export function UserProvider({ children }){
             await SecureStore.deleteItemAsync('liftingPalToken')
             setUser(null)
         } catch (error) {
-            throw Error(error.message)
+            const message = handleErrorResponse(error)
+            throw new Error(message)
         }
     }
 
@@ -48,6 +51,10 @@ export function UserProvider({ children }){
             setUser(response)
         } catch (error) {
             setUser(null)
+            let token = await SecureStore.getItemAsync('liftingPalToken')
+            if(token){ 
+                await SecureStore.deleteItemAsync('liftingPalToken')
+            }
         } finally {
             setAuthChecked(true)
         }
@@ -62,4 +69,17 @@ export function UserProvider({ children }){
             { children }
         </UserContext.Provider>
     )
+}
+
+function handleErrorResponse(error){
+    // Retreive custom errors
+    if(error.response.data.error){
+        return error.response.data.error
+    // Retreive laravel's validation errors
+    } else if (error.response.data.errors){
+        return Object.values(error.response.data.errors)[0][0]
+    // Anything else like network connection
+    } else {
+        return 'Something went wrong, please try again later'
+    }
 }

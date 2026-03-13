@@ -63,11 +63,13 @@ const Login = () => {
                 </View>
             </LinearGradient>
             <View className="pt-8 px-6">
-                    {webMessageError ? 
-                        <ThemedText bold style={{ color: Colors.errorText }} className="text-lg"> 
-                            { webMessageError } 
-                        </ThemedText> 
-                        : null
+                    {
+                        webMessageError ? 
+                            <ThemedText bold style={{ color: Colors.errorText }} className="text-lg"> 
+                                { webMessageError } 
+                            </ThemedText> 
+                        : 
+                            null
                     }
                     <ThemedText className="opacity-65 text-md pb-1">EMAIL ADDRESS</ThemedText>
                     <View className="flex items-center pb-6">
@@ -108,7 +110,7 @@ const Login = () => {
             </View>
             <ThemedText className="text-center pt-4">
                 No account?
-                <Link href="/auth/register" style={{color: Colors.theme}}> Sign up for free now.</Link>
+                <Link href="/register" style={{color: Colors.theme}}> Sign up for free now.</Link>
             </ThemedText>
         </ScrollablePage>
     )

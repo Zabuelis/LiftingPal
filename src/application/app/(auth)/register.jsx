@@ -45,6 +45,7 @@ const Register = () => {
                 setPasswordConfirmation("")
                 setErrors({})
             } catch (error) {
+                console.log(error.message)
                 setWebMessageError(error.message)
             }
             
@@ -72,11 +73,13 @@ const Register = () => {
                 </View>
             </LinearGradient>
             <View className="pt-8 px-6">
-                    {webMessageError ? 
-                        <ThemedText bold style={{ color: Colors.errorText }} className="text-lg"> 
-                            { webMessageError } 
-                        </ThemedText> 
-                        : null
+                    {
+                        webMessageError ? 
+                            <ThemedText bold style={{ color: Colors.errorText }} className="text-lg"> 
+                                { webMessageError } 
+                            </ThemedText> 
+                        : 
+                            null
                     }
                     <ThemedText className="opacity-65 text-md pb-1">EMAIL ADDRESS</ThemedText>
                     <View className="flex items-center pb-6">
@@ -144,7 +147,7 @@ const Register = () => {
             </View>
             <ThemedText className="text-center pt-4 pb-24">
                 Already have an accout?
-                <Link href="/auth/login" style={{color: Colors.theme}}> Login here.</Link>
+                <Link href="/login" style={{color: Colors.theme}}> Login here.</Link>
             </ThemedText>
         </ScrollablePage>
     )

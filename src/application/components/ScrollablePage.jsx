@@ -9,7 +9,7 @@ const ScrollablePage = ({ style, children, ...props }) => {
             style={{ flex:1, backgroundColor: Colors.background }}
             behavior={Platform.OS === "ios" ? 'padding' : 'height'}
         >
-            <ThemedView style={{flex:1}}>
+            <ThemedView safe style={{flex:1}}>
                 <ScrollView>
                     {children}
                 </ScrollView>
