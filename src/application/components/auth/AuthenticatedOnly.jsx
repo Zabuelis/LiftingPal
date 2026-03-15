@@ -1,8 +1,8 @@
 import { useRouter } from "expo-router"
 import { useUser } from "../../hooks/useUser"
 import { useEffect } from "react"
-import { Text } from "react-native"
 import ThemedView from "../ThemedView"
+import StatusIndicator from "../StatusIndicator"
 
 const AuthenticatedOnly = ({ children }) => {
     const { user, authChecked } = useUser()
@@ -15,9 +15,12 @@ const AuthenticatedOnly = ({ children }) => {
 
     }, [user, authChecked])
 
+    // Loading indicator if authentication has not been checked
     if(!authChecked || !user) {
         return (
-            <ThemedView className="flex-1"></ThemedView>
+            <ThemedView className="flex-1 items-center justify-center">
+                <StatusIndicator isLoading={true}></StatusIndicator>
+            </ThemedView>
         )
     }
 

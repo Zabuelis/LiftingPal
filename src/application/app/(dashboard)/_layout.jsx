@@ -5,6 +5,7 @@ import AuthenticatedOnly from "../../components/auth/AuthenticatedOnly";
 
 const DashboardLayout = () => {
     return (
+        // Pages accessed by authenticated users only
         <AuthenticatedOnly>
             <Tabs
                 screenOptions={{ headerShown: false, tabBarStyle: {

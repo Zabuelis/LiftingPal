@@ -2,16 +2,15 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Routes for authentication
-Route::controller(AuthController::class)->group(function (){
-    Route::post('/login', 'login');
-    Route::post('/register', 'register');
+// Routes for guest users
+Route::middleware('guest:sanctum')->group(function (){
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
 });
 
-// Routes prottected by authentication
+// Routes for authenticated users
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/getUserData', [UserController::class, 'show']);

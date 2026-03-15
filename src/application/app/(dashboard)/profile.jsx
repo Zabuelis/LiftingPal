@@ -1,6 +1,5 @@
-import ScrollablePage from "../../components/ScrollablePage"
 import ThemedView from "../../components/ThemedView"
-import { Text, View } from "react-native"
+import { Text } from "react-native"
 
 const Profile = () => {
 

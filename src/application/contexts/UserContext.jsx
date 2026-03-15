@@ -45,13 +45,14 @@ export function UserProvider({ children }){
         }
     }
 
+    // Query user information (validates the token as well)
     async function getInitialUserValue() {
         try {
             const response = await api.get('/getUserData')
             setUser(response)
         } catch (error) {
             setUser(null)
-            let token = await SecureStore.getItemAsync('liftingPalToken')
+            const token = await SecureStore.getItemAsync('liftingPalToken')
             if(token){ 
                 await SecureStore.deleteItemAsync('liftingPalToken')
             }
@@ -72,14 +73,15 @@ export function UserProvider({ children }){
 }
 
 function handleErrorResponse(error){
+    if(!error.response){
+        return "Connectivity issue detected, please try again later"
+    }
     // Retreive custom errors
     if(error.response.data.error){
         return error.response.data.error
     // Retreive laravel's validation errors
     } else if (error.response.data.errors){
         return Object.values(error.response.data.errors)[0][0]
-    // Anything else like network connection
-    } else {
-        return 'Something went wrong, please try again later'
     }
+    return "Something went wrong, please try again later"
 }

@@ -1,6 +1,7 @@
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store';
 
+// Construct HTTP request with specific headers
 const api = axios.create({
     baseURL: process.env.EXPO_PUBLIC_API_URL,
     headers: {
@@ -9,6 +10,7 @@ const api = axios.create({
     },
 });
 
+// Add authentication token to HTTP request if it exists.
 api.interceptors.request.use(async (config) => {
     const token = await SecureStore.getItemAsync('liftingPalToken');
     if(token){ 

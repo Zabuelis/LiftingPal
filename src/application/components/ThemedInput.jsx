@@ -6,7 +6,7 @@ const ThemedText = ({ style, bold, theme, ...props }) => {
         
         <TextInput
             style={[{
-                fontFamily: bold ? 'DMSans_700Bold' : 'DMSans_400Regular',
+                fontFamily: bold ? 'DMSans_800ExtraBold' : 'DMSans_500Medium',
             }, style]} {...props}
         />
     )

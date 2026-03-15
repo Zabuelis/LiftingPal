@@ -1,12 +1,13 @@
-import { View, KeyboardAvoidingView } from 'react-native'
+import { View } from 'react-native'
 import { useState } from 'react'
 import { Link } from 'expo-router'
-import { LinearGradient } from 'expo-linear-gradient'
 import { Colors } from '../../constants/Colors'
 import ScrollablePage from '../../components/ScrollablePage'
 import ThemedText from '../../components/ThemedText'
-import PressableButton from '../../components/ButtonPressable'
+import PressableButton from '../../components/PressableButton'
 import ThemedInput from '../../components/ThemedInput'
+import StatusIndicator from '../../components/StatusIndicator'
+import AuthenticationLogo from '../../components/GUI/AuthenticationLogo'
 import { useUser } from '../../hooks/useUser'
 
 
@@ -18,6 +19,7 @@ const Register = () => {
     const [errors, setErrors] = useState({})
 
     const {register} = useUser()
+    const [isLoading, setIsLoading] = useState(false)
     const [webMessageError, setWebMessageError] = useState(null)
 
     const validateRegister = () => {
@@ -35,43 +37,26 @@ const Register = () => {
 
     async function handleSubmit () {
         setWebMessageError(null)
-        if(validateRegister()){
-            try {
+        setIsLoading(true)
+        try {
+            if(validateRegister()){
                 await register(name, email, password, password_confirmation)
-                console.log("Submitted", name, email, password, password_confirmation)
                 setEmail("")
                 setName("")
                 setPassword("")
                 setPasswordConfirmation("")
                 setErrors({})
-            } catch (error) {
-                console.log(error.message)
-                setWebMessageError(error.message)
             }
-            
+        } catch (error) {
+            setWebMessageError(error.message)
+        } finally {
+            setIsLoading(false)
         }
     }
 
     return (
         <ScrollablePage>
-            <LinearGradient
-                colors={['#FFFFFF', '#D4820A']}
-                start={{ x: 0.1, y: 0.1}}
-                end={{x: 0.9, y: 1.5}}
-                style={{ height: 250}}
-            >
-                <View className="pl-6">
-                    <View>
-                        <ThemedText bold theme className="pt-12 pb-1 text-4xl">LiftingPal</ThemedText>
-                        <ThemedText className="pb-8 text-md opacity-90">TRAINING ASSISTANT</ThemedText>
-                    </View>
-                    <View>
-                        <ThemedText bold theme className="text-2xl">Build</ThemedText>
-                        <ThemedText bold className="text-2xl">strength.</ThemedText>
-                        <ThemedText bold theme className="pb-6 text-2xl">Track progress.</ThemedText>
-                    </View>
-                </View>
-            </LinearGradient>
+            <AuthenticationLogo></AuthenticationLogo>
             <View className="pt-8 px-6">
                     {
                         webMessageError ? 
@@ -136,16 +121,17 @@ const Register = () => {
                         }
                     </View>
                     <ThemedText theme className="pb-4 text-right">
-                        <Link href="/">Forgot password?</Link>
+                        <Link href="/register">Forgot password?</Link>
                     </ThemedText>
                     <View className="flex items-center">
                         {/* For some reason button component does not apply styles */}
-                        <PressableButton onPress={handleSubmit} className="w-full active:bg-amber-600 justify-center items-center h-20 rounded-[5vw] border-gray-300 border-2 bg-amber-500">
+                        <PressableButton onPress={handleSubmit} className="w-full h-20">
                             <ThemedText bold style={{ color: Colors.surface }} className="text-xl">REGISTER</ThemedText>
                         </PressableButton>
+                        <StatusIndicator isLoading={isLoading}></StatusIndicator>
                     </View>
             </View>
-            <ThemedText className="text-center pt-4 pb-24">
+            <ThemedText className="text-center pt-4 pb-8">
                 Already have an accout?
                 <Link href="/login" style={{color: Colors.theme}}> Login here.</Link>
             </ThemedText>

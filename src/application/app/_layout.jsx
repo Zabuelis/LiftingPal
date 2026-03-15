@@ -1,14 +1,14 @@
 import { Stack } from 'expo-router';
 import { Colors } from '../constants/Colors'
-import { useFonts, DMSans_400Regular, DMSans_700Bold } from '@expo-google-fonts/dm-sans'
+import { useFonts, DMSans_500Medium, DMSans_800ExtraBold } from '@expo-google-fonts/dm-sans'
 import "../global.css"
 import { UserProvider } from '../contexts/UserContext';
 import { StatusBar } from 'expo-status-bar';
 
 const RootLayout = () => {
     const [loadedFonts] = useFonts({
-        DMSans_400Regular,
-        DMSans_700Bold
+        DMSans_500Medium,
+        DMSans_800ExtraBold
     })
 
     const isLoggedIn = true

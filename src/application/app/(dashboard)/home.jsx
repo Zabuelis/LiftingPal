@@ -1,32 +1,35 @@
 import ThemedText from "../../components/ThemedText"
 import ThemedView from "../../components/ThemedView"
 import { Colors } from "../../constants/Colors"
-import { Link } from "expo-router"
-import ButtonPressable from "../../components/ButtonPressable"
+import PressableButton from "../../components/PressableButton"
 import { useUser } from '../../hooks/useUser'
 import { useState } from 'react'
-import { Text } from "react-native"
+import StatusIndicator from '../../components/StatusIndicator'
 
 const Home = () => {
     const {user, logout} = useUser()
     const [webMessageError, setWebMessageError] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
     
     async function handleLogout() {
         setWebMessageError(null)
+        setIsLoading(true)
         try {
            await logout()
         } catch (error) {
             setWebMessageError(error.message)
+        } finally {
+            setIsLoading(false)
         }
     }
 
     return (
         <ThemedView className="flex-1 items-center justify-center">
-            <Text className="text-xl font-bold text-blue-500 p-8">Welcome to LiftingPal, 
+            <ThemedText bold className="text-xl text-blue-500 p-8">Welcome to LiftingPal, 
                 {
-                    user ? user.name : " Unauthenticated"
+                    user ? ` ${user.name}` : " Unauthenticated"
                 }
-            </Text>
+            </ThemedText>
             {
                 webMessageError ? 
                     <ThemedText bold style={{ color: Colors.errorText }} className="text-lg"> 
@@ -35,9 +38,10 @@ const Home = () => {
                 : 
                     null
             }
-            <ButtonPressable onPress={handleLogout} className="w-full active:bg-amber-600 justify-center items-center h-20 rounded-[5vw] border-gray-300 border-2 bg-amber-500">
+            <PressableButton onPress={handleLogout} className="w-full h-20">
                 <ThemedText bold style={{ color: Colors.surface }} className="text-xl">LOG OUT</ThemedText>
-            </ButtonPressable>
+            </PressableButton>
+            <StatusIndicator isLoading={isLoading}></StatusIndicator>
         </ThemedView>
 
 

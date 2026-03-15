@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+
+    // Return authenticated user information
     public function show(){
         $user = Auth::user();
 
