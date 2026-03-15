@@ -5,7 +5,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Routes for guest users
-Route::middleware('guest:sanctum')->group(function (){
+Route::middleware('guestUser')->group(function (){
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
 });
