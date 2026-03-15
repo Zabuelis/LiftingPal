@@ -7,8 +7,7 @@ const StatusIndicator = ({isLoading = false, children, ...props}) => {
         return (
             <ActivityIndicator size="large" color={Colors.theme} className="p-4"/>
         )
-    }
-    if(!isLoading){
+    } else {
         return (
             children
         )

@@ -6,5 +6,6 @@ export const Colors = {
     theme: '#D4820A',
     accentTheme: '#FEF3E2',
     buttonPress: '#f2a83a',
-    errorText: '#FF0000'
+    errorText: '#FF0000',
+    passiveTabButton: 'gray'
 }

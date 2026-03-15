@@ -27,7 +27,7 @@ const Register = () => {
         if(!email) errors.email = "Email is required."
         if(!name) errors.name = "Name is required."
         if(!password || !password_confirmation) errors.password = "Password is required."
-        if(password.length < 8) errors.password = "Password length minimum 8 symbols."
+        if(password.length < 8) errors.password = "Password length required: minimum 8 symbols."
         if(password != password_confirmation) errors.password_confirmation = "Passwords must match."
 
         setErrors(errors)
@@ -68,29 +68,29 @@ const Register = () => {
                     }
                     <ThemedText className="opacity-65 text-md pb-1">EMAIL ADDRESS</ThemedText>
                     <View className="flex items-center pb-6">
-                            <ThemedInput 
-                            placeholder='Email'
-                            onChangeText={setEmail}
-                            value={email}
-                            style={{backgroundColor: Colors.surface}} 
-                            className="w-full rounded-[4vw] focus:border-amber-500 h-16 border-gray-300 border-2">
-                            </ThemedInput>
-                            {
-                                errors.email ? <ThemedText bold style={{ color: Colors.errorText }} className="w-full text-left"> {errors.email} </ThemedText> : null
-                            }
+                        <ThemedInput 
+                        placeholder='Email'
+                        onChangeText={setEmail}
+                        value={email}
+                        style={{backgroundColor: Colors.surface}} 
+                        className="w-full rounded-[4vw] focus:border-amber-500 h-16 border-gray-300 border-2">
+                        </ThemedInput>
+                        {
+                            errors.email ? <ThemedText bold style={{ color: Colors.errorText }} className="w-full text-left"> {errors.email} </ThemedText> : null
+                        }
                     </View>
                     <ThemedText className="opacity-65 text-md pb-1">NAME</ThemedText>
                     <View className="flex items-center pb-6">
-                            <ThemedInput 
-                            placeholder='Name'
-                            onChangeText={setName}
-                            value={name}
-                            style={{backgroundColor: Colors.surface}} 
-                            className="w-full rounded-[4vw] focus:border-amber-500 h-16 border-gray-300 border-2">
-                            </ThemedInput>
-                            {
-                                errors.name ? <ThemedText bold style={{ color: Colors.errorText }} className="w-full text-left"> {errors.name} </ThemedText> : null
-                            }
+                        <ThemedInput 
+                        placeholder='Name'
+                        onChangeText={setName}
+                        value={name}
+                        style={{backgroundColor: Colors.surface}} 
+                        className="w-full rounded-[4vw] focus:border-amber-500 h-16 border-gray-300 border-2">
+                        </ThemedInput>
+                        {
+                            errors.name ? <ThemedText bold style={{ color: Colors.errorText }} className="w-full text-left"> {errors.name} </ThemedText> : null
+                        }
                     </View>
                     <ThemedText className="opacity-65 text-md pb-1">PASSWORD</ThemedText>
                     <View className="flex items-center pb-6">

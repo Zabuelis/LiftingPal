@@ -23,7 +23,7 @@ const DashboardLayout = () => {
                         <Ionicons 
                             name="home-outline"
                             size={24}
-                            color={focused ? Colors.theme : "gray"}
+                            color={focused ? Colors.theme : Colors.passiveTabButton}
                         />
                     ) }}/>
                 <Tabs.Screen 
@@ -32,7 +32,7 @@ const DashboardLayout = () => {
                         <Ionicons
                             name="person-outline"
                             size={24}
-                            color={focused ? Colors.theme : "gray"}
+                            color={focused ? Colors.theme : Colors.passiveTabButton}
                         />
                     ) }}/> 
             </Tabs>
