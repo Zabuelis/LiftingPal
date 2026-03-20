@@ -1,15 +1,17 @@
-import { TextInput } from "react-native"
+import { TextInput } from "react-native";
 
-const ThemedText = ({ style, bold, theme, ...props }) => {
+const ThemedInput = ({ style, bold, theme, ...props }) => {
+  return (
+    <TextInput
+      style={[
+        {
+          fontFamily: bold ? "DMSans_800ExtraBold" : "DMSans_500Medium",
+        },
+        style,
+      ]}
+      {...props}
+    />
+  );
+};
 
-    return(
-        
-        <TextInput
-            style={[{
-                fontFamily: bold ? 'DMSans_800ExtraBold' : 'DMSans_500Medium',
-            }, style]} {...props}
-        />
-    )
-}
-
-export default ThemedText
+export default ThemedInput;

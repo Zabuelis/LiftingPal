@@ -1,5 +1,5 @@
 import { View } from "react-native"
-import ThemedText from '../ThemedText'
+import ThemedText from '../../ThemedText'
 import { LinearGradient } from 'expo-linear-gradient'
 
 const AuthenticationLogo = ({ ...props }) => {

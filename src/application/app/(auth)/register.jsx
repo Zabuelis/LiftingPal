@@ -7,7 +7,7 @@ import ThemedText from '../../components/ThemedText'
 import PressableButton from '../../components/PressableButton'
 import ThemedInput from '../../components/ThemedInput'
 import StatusIndicator from '../../components/StatusIndicator'
-import AuthenticationLogo from '../../components/GUI/AuthenticationLogo'
+import AuthenticationLogo from '../../components/GUI/Logos/AuthenticationLogo'
 import { useUser } from '../../hooks/useUser'
 
 
@@ -26,7 +26,6 @@ const Register = () => {
         let errors = {}
         if(!email) errors.email = "Email is required."
         if(!name) errors.name = "Name is required."
-        if(!password || !password_confirmation) errors.password = "Password is required."
         if(password.length < 8) errors.password = "Password length required: minimum 8 symbols."
         if(password != password_confirmation) errors.password_confirmation = "Passwords must match."
 

@@ -8,7 +8,7 @@ import PressableButton from '../../components/PressableButton'
 import ThemedInput from '../../components/ThemedInput'
 import StatusIndicator from '../../components/StatusIndicator'
 import { useUser } from '../../hooks/useUser'
-import AuthenticationLogo from '../../components/GUI/AuthenticationLogo'
+import AuthenticationLogo from '../../components/GUI/Logos/AuthenticationLogo'
 
 
 const Login = () => {
