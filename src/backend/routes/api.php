@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WorkoutController;
 use Illuminate\Support\Facades\Route;
 
 // Routes for guest users
@@ -24,4 +25,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/updateExercise/{id}', [ExerciseController::class, 'update']);
 
     // Workout related routes
+    Route::post('/createWorkout', [WorkoutController::class, 'create']);
+    Route::get('/viewWorkout', [WorkoutController::class, 'view']);
+    Route::delete('/deleteWorkout/{id}', [WorkoutController::class, 'delete']);
+
 });

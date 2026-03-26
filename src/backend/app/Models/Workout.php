@@ -9,4 +9,10 @@ class Workout extends Model
         protected $table = 'workout';
     protected $primaryKey = 'workout_id';
     public $timestamps = false;
+
+    protected $fillable = [
+        'user_id',
+        'description',
+        'name',
+    ];
 }

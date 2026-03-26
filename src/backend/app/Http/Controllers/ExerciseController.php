@@ -12,9 +12,9 @@ class ExerciseController extends Controller
 {
     public function view(){
         $exercises = Exercise::where('user_id', Auth::user()->user_id)->orderBy('name', 'asc')->get();
-        if(!$exercises){
+        if(count($exercises) === 0){
             return response()->json([
-                'success' => 'It appears you have no exercises... Start by adding a new one.'
+                'error' => 'It appears you have no exercises... Start by adding a new one.'
             ]);
         } else{
             return response()->json([
