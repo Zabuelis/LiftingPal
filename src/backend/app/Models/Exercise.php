@@ -9,4 +9,10 @@ class Exercise extends Model
     protected $table = 'exercise';
     protected $primaryKey = 'exercise_id';
     public $timestamps = false;
+
+    protected $fillable = [
+        'name',
+        'user_id',
+        'description',
+    ];
 }

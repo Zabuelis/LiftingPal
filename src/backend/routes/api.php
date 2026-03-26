@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,6 +13,15 @@ Route::middleware('guestUser')->group(function (){
 
 // Routes for authenticated users
 Route::middleware('auth:sanctum')->group(function () {
+    // User related routes
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/getUserData', [UserController::class, 'show']);
+
+    // Exercise related routes
+    Route::post('/createExercise', [ExerciseController::class, 'create']);
+    Route::get('/viewExercise', [ExerciseController::class, 'view']);
+    Route::delete('/deleteExercise/{id}', [ExerciseController::class, 'delete']);
+    Route::put('/updateExercise/{id}', [ExerciseController::class, 'update']);
+
+    // Workout related routes
 });
