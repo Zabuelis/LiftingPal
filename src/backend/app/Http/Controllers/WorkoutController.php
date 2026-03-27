@@ -13,18 +13,24 @@ use Exception;
 
 class WorkoutController extends Controller
 {
+    private $missingWorkoutErrorMsg = 'It appears you have no workouts... Start by adding a new one.';
+    private $missingExercisesErrorMsg = 'Failed to create the workout. Provided exercises do not exist.';
+    private $updateFailureErrorMsg = 'Failed to update the workout, please try again later.';
+
     public function view(){
         // Join workout_exercise, workout, exercise tables to return object with field exercise_names
         $workouts = Workout::leftJoin('workout_exercise', 'workout.workout_id', '=', 'workout_exercise.workout_id')
             ->leftJoin('exercise', 'workout_exercise.exercise_id', '=', 'exercise.exercise_id')
-            ->select('workout.*', DB::raw("STRING_AGG(exercise.name, ', ') as exercise_names"))
+            ->select('workout.*', 
+                DB::raw("ARRAY_AGG(exercise.name) as exercise_names"),
+                DB::raw("ARRAY_AGG(exercise.exercise_id) as exercise_ids"))
             ->where('workout.user_id', Auth::user()->user_id)
             ->groupBy('workout.workout_id')
             ->orderBy('workout.name', 'asc')
             ->get();
         if(count($workouts) === 0){
             return response()->json([
-                'error' => 'It appears you have no workouts... Start by adding a new one.'
+                'error' => $this->missingWorkoutErrorMsg
             ]);
         } else{
              return response()->json([
@@ -55,7 +61,7 @@ class WorkoutController extends Controller
                 'message' => $e->getMessage(),
             ]);
             return response()->json([
-                'error' => 'Failed to create the workout. Provided exercises do not exist.'
+                'error' => $this->missingExercisesErrorMsg
             ], 400);
         }
 
@@ -64,7 +70,7 @@ class WorkoutController extends Controller
             'name' => $validated['name'],
             'description' => $validated['description'],
         ];
-        // Tie workout with exercises (M->N) using WorkoutExercise table
+        // Tie workout with exercises (M->N) using Workout_Exercise table
         try {
             $workout = Workout::create($workoutForm);
 
@@ -92,16 +98,76 @@ class WorkoutController extends Controller
         
     }
 
-    public function update($id){
+    public function update(Request $request, $id){
+        $validated = $request->validate([
+            'name' => 'required',
+            'description' => 'nullable',
+            'exercise_ids' => 'required|array',
+            'exercise_names' => 'nullable'
+        ]);
+
+        try {
+            $workout = Workout::where('workout_id', $id)->where('user_id', Auth::user()->user_id)->firstOrFail();
+        } catch (Exception $e) {
+            Log::error("Workout update failed", [
+                'message' => $e,
+            ]);
+            return response()->json([
+                'error' => $this->updateFailureErrorMsg
+            ], 400);
+        }
+
+        foreach($validated['exercise_ids'] as $exercise_id){
+            if(Exercise::where('exercise_id', $exercise_id)->where('user_id', Auth::user()->user_id)->doesntExist()){
+                return response()->json([
+                    'error' => $this->updateFailureErrorMsg
+                ], 400);
+            }
+        }
+
+        $workout->name = $validated['name'];
+        if(!empty($validated['description'])){
+            $workout->description = $validated['description'];
+        } else {
+            $workout->description = "";
+        }
+        $workout->update();
+
+        // Handle a situation where exercise or workout is deleted mid update
+        try {
+            WorkoutExercise::where('workout_id', $id)->delete();
+
+            foreach($validated['exercise_ids'] as $exercise_id){
+            WorkoutExercise::insert([
+                'workout_id' => $id,
+                'exercise_id' => $exercise_id,
+            ]);
+
+            return response()->json([
+                'success' => 'Workout updated successfully.'
+            ]);
+        }
+        } catch (Exception $e) {
+            Log::error("Workout or exercise was removed mid update", [
+                'message' => $e,
+            ]);
+            return response()->json([
+                'error' => $this->updateFailureErrorMsg
+            ]);
+        }
 
     }
 
     public function delete($id){
-        if(Workout::where('workout_id', $id)->where('user_id', Auth::user()->user_id)->delete()){
+        try {
+            Workout::where('workout_id', $id)->where('user_id', Auth::user()->user_id)->delete();
             return response()->json([
                 'success' => 'Workout removed successfully.'
             ]);
-        } else{
+        } catch (Exception $e) {
+            Log::error("Workout delete failed", [
+                'message' => $e,
+            ]);
             return response()->json([
                 'error' => 'Failed to remove the workout. Please try again later...'
             ], 400);

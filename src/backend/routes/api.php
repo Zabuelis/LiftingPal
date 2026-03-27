@@ -19,14 +19,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/getUserData', [UserController::class, 'show']);
 
     // Exercise related routes
-    Route::post('/createExercise', [ExerciseController::class, 'create']);
-    Route::get('/viewExercise', [ExerciseController::class, 'view']);
-    Route::delete('/deleteExercise/{id}', [ExerciseController::class, 'delete']);
-    Route::put('/updateExercise/{id}', [ExerciseController::class, 'update']);
+    Route::controller(ExerciseController::class)->group(function (){
+        Route::get('/viewExercise', 'view');
+        Route::post('/createExercise', 'create');
+        Route::delete('/deleteExercise/{id}', 'delete');
+        Route::put('/updateExercise/{id}', 'update');
+    });
 
     // Workout related routes
-    Route::post('/createWorkout', [WorkoutController::class, 'create']);
-    Route::get('/viewWorkout', [WorkoutController::class, 'view']);
-    Route::delete('/deleteWorkout/{id}', [WorkoutController::class, 'delete']);
+    Route::controller(WorkoutController::class)->group(function(){
+        Route::post('/createWorkout', 'create');    
+        Route::get('/viewWorkout', 'view');
+        Route::delete('/deleteWorkout/{id}', 'delete');
+        Route::put('/updateWorkout/{id}', 'update');
+    });
 
 });

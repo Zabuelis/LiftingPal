@@ -41,7 +41,7 @@ class ExerciseController extends Controller
                 'success' => 'Exercise created successfully.'
             ]);
         } catch (Exception $e) {
-             Log::error("Exercise record creation error", [
+            Log::error("Exercise record creation error", [
                 'message' => $e->getMessage(),
             ]);
             return response()->json([
@@ -50,26 +50,28 @@ class ExerciseController extends Controller
         }
     }
 
-    // Logic here could be improved
     public function update(Request $request, $id){
-        if($request->name == "" && $request->description == ""){
+        $validated = $request->validate([
+            'name' => 'required',
+            'description' => 'nullable'
+        ]);
+
+        try {
+            $exercise = Exercise::where('exercise_id', $id)->where('user_id', Auth::user()->user_id)->firstOrFail();   
+        } catch (Exception $e) {
+            Log::error("Exercise record update error", [
+                'message' => $e->getMessage(),
+            ]);
             return response()->json([
                 'error' => 'Failed to update the exercise, please try again later.'
             ], 400);
         }
 
-        $exercise = Exercise::where('exercise_id', $id)->where('user_id', Auth::user()->user_id)->firstOrFail();
-        if(!$exercise){
-            return response()->json([
-                'error' => 'Failed to update the exercise, please try again later.'
-            ], 400);
-        }
-
-        if($request->name != ""){
-            $exercise->name = $request->name;
-        }
-        if($request->description != ""){
-            $exercise->description = $request->description;
+        $exercise->name = $validated['name'];
+        if(!empty($validated['description'])){
+            $exercise->description = $validated['description'];
+        } else {
+            $exercise->description = null;
         }
         $exercise->update();
 
@@ -79,11 +81,15 @@ class ExerciseController extends Controller
     }
 
     public function delete($id){
-        if(Exercise::where('exercise_id', $id)->where('user_id', Auth::user()->user_id)->delete()){
+        try {
+            Exercise::where('exercise_id', $id)->where('user_id', Auth::user()->user_id)->delete();
             return response()->json([
                 'success' => 'Exercise removed successfully.'
             ]);
-        } else{
+        } catch (Exception $e) {
+            Log::error("Exercise record delete error", [
+                'message' => $e->getMessage(),
+            ]);
             return response()->json([
                 'error' => 'Failed to remove selected exercise.'
             ], 400);
