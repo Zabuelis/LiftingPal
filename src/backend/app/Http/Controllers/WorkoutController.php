@@ -22,8 +22,8 @@ class WorkoutController extends Controller
         $workouts = Workout::leftJoin('workout_exercise', 'workout.workout_id', '=', 'workout_exercise.workout_id')
             ->leftJoin('exercise', 'workout_exercise.exercise_id', '=', 'exercise.exercise_id')
             ->select('workout.*', 
-                DB::raw("ARRAY_AGG(exercise.name) as exercise_names"),
-                DB::raw("ARRAY_AGG(exercise.exercise_id) as exercise_ids"))
+                DB::raw("JSON_AGG(exercise.name) as exercise_names"),
+                DB::raw("JSON_AGG(exercise.exercise_id) as exercise_ids"))
             ->where('workout.user_id', Auth::user()->user_id)
             ->groupBy('workout.workout_id')
             ->orderBy('workout.name', 'asc')

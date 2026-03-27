@@ -6,25 +6,10 @@ import ThemedText from "../../ThemedText";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { View } from "react-native";
 import WorkoutCard from "../Cards/WorkoutCard";
+import { useWorkouts } from "../../../hooks/useWorkouts";
 
 const WorkoutsView = () => {
-  const workouts = [
-    {
-      name: "Legday",
-      exercises: [
-        "Overhead press",
-        "Bench press",
-        "Squat",
-        "Something more",
-        "More more",
-        "More",
-      ],
-    },
-    {
-      name: "Pushday",
-      exercises: ["Overhead press", "Bench press", "Squat"],
-    },
-  ];
+  const { workouts } = useWorkouts();
 
   return (
     <ScrollablePage safeView={false}>
@@ -50,9 +35,15 @@ const WorkoutsView = () => {
           />
         </View>
         {/* Workout cards */}
-        {workouts.map((workout, index) => (
-          <WorkoutCard object={workout} key={index}></WorkoutCard>
-        ))}
+        {workouts ? (
+          workouts.map((workout, index) => (
+            <WorkoutCard object={workout} key={index}></WorkoutCard>
+          ))
+        ) : (
+          <ThemedText bold className="text-2xl pt-4">
+            Start by inserting your first workout.
+          </ThemedText>
+        )}
       </View>
     </ScrollablePage>
   );

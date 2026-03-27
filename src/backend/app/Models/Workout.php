@@ -15,4 +15,9 @@ class Workout extends Model
         'description',
         'name',
     ];
+
+    protected $casts = [
+        'exercise_names' => 'array',
+        'exercise_ids' => 'array',
+    ];
 }
