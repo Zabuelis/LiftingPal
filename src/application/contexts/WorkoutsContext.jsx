@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import api from "../lib/axios";
 import { useUser } from "../hooks/useUser";
+import handleErrorResponse from "../lib/webErrorMessages";
 
 export const WorkoutsContext = createContext();
 
@@ -14,7 +15,8 @@ export function WorkoutsProvider({ children }) {
       const response = await api.get("/viewExercise");
       setExercises(response.data.exercises);
     } catch (error) {
-      console.log(error);
+      const message = handleErrorResponse(error);
+      throw new Error(message);
     }
   }
 
@@ -23,11 +25,23 @@ export function WorkoutsProvider({ children }) {
       const response = await api.get("/viewWorkout");
       setWorkouts(response.data.workouts);
     } catch (error) {
-      console.log(error);
+      const message = handleErrorResponse(error);
+      throw new Error(message);
     }
   }
 
-  async function createExercise(exercise) {}
+  async function createExercise(name, description) {
+    try {
+      const response = await api.post("/createExercise", {
+        name,
+        description,
+      });
+      return response.data.success;
+    } catch (error) {
+      const message = handleErrorResponse(error);
+      throw new Error(message);
+    }
+  }
 
   async function createWorkout(workout) {}
 
@@ -68,6 +82,7 @@ export function WorkoutsProvider({ children }) {
         fetchExercises,
         deleteExercise,
         deleteWorkout,
+        createExercise,
       }}
     >
       {children}

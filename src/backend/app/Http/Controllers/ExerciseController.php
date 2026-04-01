@@ -30,7 +30,7 @@ class ExerciseController extends Controller
     public function create(Request $request){
         $validated = $request->validate([
             'name' => 'required|string',
-            'description' => 'nullable',
+            'description' => 'nullable|max:128',
         ]);
 
         $validated['user_id'] = Auth::user()->user_id;

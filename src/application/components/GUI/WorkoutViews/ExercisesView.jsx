@@ -13,7 +13,7 @@ const ExercisesView = () => {
   const { exercises } = useWorkouts();
 
   function handleCreate() {
-    router.replace("/workoutForm");
+    router.push("/workoutForm");
   }
 
   return (

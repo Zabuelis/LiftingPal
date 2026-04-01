@@ -1,5 +1,5 @@
 import { useWindowDimensions, Text } from "react-native"
-import { TabView, TabBar } from 'react-native-tab-view'
+import { TabView, TabBar, Tabs } from 'react-native-tab-view'
 import { Colors } from "../../constants/Colors";
 import WorkoutsView from "../../components/GUI/WorkoutViews/WorkoutsView";
 import ThemedView from "../../components/ThemedView"

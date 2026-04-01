@@ -60,6 +60,12 @@ const DashboardLayout = () => {
               ),
             }}
           />
+          <Tabs.Screen
+            name="(forms)"
+            options={{
+              href: null,
+            }}
+          />
         </Tabs>
       </WorkoutsProvider>
     </AuthenticatedOnly>
