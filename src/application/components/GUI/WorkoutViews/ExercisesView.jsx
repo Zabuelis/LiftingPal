@@ -8,9 +8,25 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import WorkoutCard from "../Cards/WorkoutCard";
 import { useWorkouts } from "../../../hooks/useWorkouts";
 import { router } from "expo-router";
+import { useState } from "react";
+import SuccessCard from "../Cards/SuccessCard";
+import ErrorCard from "../Cards/ErrorCard";
 
 const ExercisesView = () => {
-  const { exercises } = useWorkouts();
+  const { exercises, deleteExercise } = useWorkouts();
+  const [webError, setWebError] = useState(null);
+  const [webMessage, setWebMessage] = useState(null);
+
+  async function removeExercise(exercise_id) {
+    setWebError(null);
+    setWebMessage(null);
+    try {
+      const message = await deleteExercise(exercise_id);
+      setWebMessage(message);
+    } catch (error) {
+      setWebError(error.message);
+    }
+  }
 
   function handleCreate() {
     router.push("/workoutForm");
@@ -18,6 +34,8 @@ const ExercisesView = () => {
 
   return (
     <ScrollablePage safeView={false}>
+      {webMessage ? <SuccessCard message={webMessage}></SuccessCard> : null}
+      {webError ? <ErrorCard error={webError}></ErrorCard> : null}
       <View className="py-6 px-4 flex-row items-center justify-between">
         <ThemedText bold className="text-3xl">
           MY EXERCISES
@@ -44,7 +62,11 @@ const ExercisesView = () => {
 
         {exercises ? (
           exercises.map((exercise, index) => (
-            <WorkoutCard object={exercise} key={index}></WorkoutCard>
+            <WorkoutCard
+              object={exercise}
+              key={index}
+              delete={removeExercise}
+            ></WorkoutCard>
           ))
         ) : (
           <ThemedText bold className="text-2xl pt-4">

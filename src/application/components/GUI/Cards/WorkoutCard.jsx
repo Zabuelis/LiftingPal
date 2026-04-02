@@ -9,7 +9,7 @@ import { router } from "expo-router";
 const WorkoutCard = ({ object, style, ...props }) => {
   const displayExercises = object.exercise_names?.slice(0, 3);
   const hasMore = object.exercise_names?.length > 3;
-  const { deleteExercise, deleteWorkout } = useWorkouts({});
+  const { deleteWorkout } = useWorkouts({});
 
   function handleDelete() {
     Alert.alert(
@@ -21,18 +21,10 @@ const WorkoutCard = ({ object, style, ...props }) => {
         },
         {
           text: "Remove",
-          onPress: deleteRecord,
+          onPress: () => props.delete(object.exercise_id),
         },
       ],
     );
-  }
-
-  function deleteRecord() {
-    if (!displayExercises) {
-      deleteExercise(object.exercise_id);
-    } else {
-      deleteWorkout(object.workout_id);
-    }
   }
 
   return (

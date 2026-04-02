@@ -7,12 +7,30 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { View } from "react-native";
 import WorkoutCard from "../Cards/WorkoutCard";
 import { useWorkouts } from "../../../hooks/useWorkouts";
+import { useState } from "react";
+import SuccessCard from "../Cards/SuccessCard";
+import ErrorCard from "../Cards/ErrorCard";
 
 const WorkoutsView = () => {
-  const { workouts } = useWorkouts();
+  const { workouts, deleteWorkout } = useWorkouts({});
+  const [webMessage, setWebMessage] = useState(null);
+  const [webError, setWebError] = useState(null);
+
+  async function removeWorkout(workout_id) {
+    setWebError(null);
+    setWebMessage(null);
+    try {
+      const message = await deleteWorkout(workout_id);
+      setWebMessage(message);
+    } catch (error) {
+      setWebError(error.message);
+    }
+  }
 
   return (
     <ScrollablePage safeView={false}>
+      {webMessage ? <SuccessCard webMessage={webMessage}></SuccessCard> : null}
+      {webError ? <ErrorCard error={webError}></ErrorCard> : null}
       <View className="py-6 px-4 flex-row items-center justify-between">
         <ThemedText bold className="text-3xl">
           MY WORKOUTS
@@ -37,7 +55,11 @@ const WorkoutsView = () => {
         {/* Workout cards */}
         {workouts ? (
           workouts.map((workout, index) => (
-            <WorkoutCard object={workout} key={index}></WorkoutCard>
+            <WorkoutCard
+              object={workout}
+              key={index}
+              delete={removeWorkout}
+            ></WorkoutCard>
           ))
         ) : (
           <ThemedText bold className="text-2xl pt-4">

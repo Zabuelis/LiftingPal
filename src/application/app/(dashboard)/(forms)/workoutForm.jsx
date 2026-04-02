@@ -8,6 +8,8 @@ import ThemedInput from "../../../components/ThemedInput";
 import { useState } from "react";
 import { useWorkouts } from "../../../hooks/useWorkouts";
 import StatusIndicator from "../../../components/StatusIndicator";
+import SuccessCard from "../../../components/GUI/Cards/SuccessCard";
+import ErrorCard from "../../../components/GUI/Cards/ErrorCard";
 
 const WorkoutForm = () => {
   const { createExercise } = useWorkouts();
@@ -90,6 +92,8 @@ const WorkoutForm = () => {
 
   return (
     <ThemedView safe className="flex-1">
+      {webMessage ? <SuccessCard message={webMessage}></SuccessCard> : null}
+      {webError ? <ErrorCard error={webError}></ErrorCard> : null}
       <View className="flex-row items-center p-4">
         <PressableButton
           onPress={handleReturn}
@@ -105,24 +109,6 @@ const WorkoutForm = () => {
         </ThemedText>
       </View>
       <View className="p-4">
-        {webMessage ? (
-          <ThemedText
-            bold
-            style={{ color: Colors.accentText }}
-            className="text-lg"
-          >
-            {webMessage}
-          </ThemedText>
-        ) : null}
-        {webError ? (
-          <ThemedText
-            bold
-            style={{ color: Colors.errorText }}
-            className="text-lg"
-          >
-            {webError}
-          </ThemedText>
-        ) : null}
         <ThemedText className="p-1 text-lg opacity-65">
           EXERCISE NAME
         </ThemedText>

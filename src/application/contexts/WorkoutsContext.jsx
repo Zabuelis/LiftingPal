@@ -58,6 +58,7 @@ export function WorkoutsProvider({ children }) {
         (exercise) => exercise.exercise_id !== id,
       );
       setExercises(newExercises);
+      return response.data.success;
     } catch (error) {
       console.log(error);
     }
