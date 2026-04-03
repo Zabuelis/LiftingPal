@@ -10,6 +10,7 @@ import { useWorkouts } from "../../../hooks/useWorkouts";
 import { useState } from "react";
 import SuccessCard from "../Cards/SuccessCard";
 import ErrorCard from "../Cards/ErrorCard";
+import { router } from "expo-router";
 
 const WorkoutsView = () => {
   const { workouts, deleteWorkout } = useWorkouts({});
@@ -27,6 +28,10 @@ const WorkoutsView = () => {
     }
   }
 
+  function handleCreate() {
+    router.push("/workoutForm");
+  }
+
   return (
     <ScrollablePage safeView={false}>
       {webMessage ? <SuccessCard webMessage={webMessage}></SuccessCard> : null}
@@ -35,7 +40,7 @@ const WorkoutsView = () => {
         <ThemedText bold className="text-3xl">
           MY WORKOUTS
         </ThemedText>
-        <PressableButton className="w-14 h-14">
+        <PressableButton className="w-14 h-14" onPress={handleCreate}>
           <ThemedText style={{ color: Colors.surface }} className="text-4xl">
             +
           </ThemedText>

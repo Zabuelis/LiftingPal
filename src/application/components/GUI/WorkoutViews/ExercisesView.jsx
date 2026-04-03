@@ -29,7 +29,14 @@ const ExercisesView = () => {
   }
 
   function handleCreate() {
-    router.push("/workoutForm");
+    router.push("/exerciseForm");
+  }
+
+  function handleEdit(id) {
+    router.push({
+      pathname: "/exerciseForm",
+      params: { id },
+    });
   }
 
   return (
@@ -66,6 +73,7 @@ const ExercisesView = () => {
               object={exercise}
               key={index}
               delete={removeExercise}
+              edit={handleEdit}
             ></WorkoutCard>
           ))
         ) : (

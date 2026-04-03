@@ -1,15 +1,14 @@
-import { Alert, ScrollView, View } from "react-native";
+import { Alert, View } from "react-native";
 import { Colors } from "../../../constants/Colors";
 import ThemedText from "../../ThemedText";
 import PressableButton from "../../PressableButton";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useWorkouts } from "../../../hooks/useWorkouts";
-import { router } from "expo-router";
 
 const WorkoutCard = ({ object, style, ...props }) => {
   const displayExercises = object.exercise_names?.slice(0, 3);
   const hasMore = object.exercise_names?.length > 3;
-  const { deleteWorkout } = useWorkouts({});
+  const id = object.exercise_id ? object.exercise_id : object.workout_id;
 
   function handleDelete() {
     Alert.alert(
@@ -21,10 +20,14 @@ const WorkoutCard = ({ object, style, ...props }) => {
         },
         {
           text: "Remove",
-          onPress: () => props.delete(object.exercise_id),
+          onPress: () => props.delete(id),
         },
       ],
     );
+  }
+
+  function handleEdit() {
+    props.edit(id);
   }
 
   return (
@@ -33,11 +36,11 @@ const WorkoutCard = ({ object, style, ...props }) => {
       className="rounded-[4vw] h-64 my-4 rounded-[4vw] border-gray-300 border-2"
     >
       <View className="flex-row p-4 items-center justify-between h-20">
-        <ThemedText bold className="text-2xl">
+        <ThemedText bold className="text-2xl flex-1" numberOfLines={1}>
           {object.name}
         </ThemedText>
         <View className="flex-row items-center justify-between">
-          <PressableButton className="h-12 mx-2 w-20">
+          <PressableButton className="h-12 mx-2 w-20" onPress={handleEdit}>
             <ThemedText bold>Edit</ThemedText>
           </PressableButton>
           <PressableButton

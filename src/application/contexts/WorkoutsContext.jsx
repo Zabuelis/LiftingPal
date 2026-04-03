@@ -12,8 +12,8 @@ export function WorkoutsProvider({ children }) {
 
   async function fetchWorkouts() {
     try {
-      const response = await api.get("/viewExercise");
-      setExercises(response.data.exercises);
+      const response = await api.get("/viewWorkout");
+      setWorkouts(response.data.workouts);
     } catch (error) {
       const message = handleErrorResponse(error);
       throw new Error(message);
@@ -22,8 +22,8 @@ export function WorkoutsProvider({ children }) {
 
   async function fetchExercises() {
     try {
-      const response = await api.get("/viewWorkout");
-      setWorkouts(response.data.workouts);
+      const response = await api.get("/viewExercise");
+      setExercises(response.data.exercises);
     } catch (error) {
       const message = handleErrorResponse(error);
       throw new Error(message);
@@ -36,6 +36,7 @@ export function WorkoutsProvider({ children }) {
         name,
         description,
       });
+      await fetchExercises();
       return response.data.success;
     } catch (error) {
       const message = handleErrorResponse(error);
@@ -43,11 +44,36 @@ export function WorkoutsProvider({ children }) {
     }
   }
 
-  async function createWorkout(workout) {}
+  async function createWorkout(name, exercises) {
+    try {
+      const response = await api.post("/createWorkout", {
+        name,
+        description: "",
+        exercise_ids: exercises,
+      });
+      fetchWorkouts();
+      return response.data.success;
+    } catch (error) {
+      const message = handleErrorResponse(error);
+      throw new Error(message);
+    }
+  }
 
-  async function updateExercise(exercise) {}
+  async function updateExercise(id, name, description) {
+    try {
+      const response = await api.put("/updateExercise/" + id, {
+        name,
+        description,
+      });
+      await fetchExercises();
+      return response.data.success;
+    } catch (error) {
+      const message = handleErrorResponse(error);
+      throw new Error(message);
+    }
+  }
 
-  async function updateWorkout(workout) {}
+  async function updateWorkout(name, description, id) {}
 
   async function deleteWorkout(id) {}
 
@@ -84,6 +110,8 @@ export function WorkoutsProvider({ children }) {
         deleteExercise,
         deleteWorkout,
         createExercise,
+        updateExercise,
+        createWorkout,
       }}
     >
       {children}

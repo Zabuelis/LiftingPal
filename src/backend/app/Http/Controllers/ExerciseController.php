@@ -53,7 +53,7 @@ class ExerciseController extends Controller
     public function update(Request $request, $id){
         $validated = $request->validate([
             'name' => 'required',
-            'description' => 'nullable'
+            'description' => 'nullable|max:128'
         ]);
 
         try {

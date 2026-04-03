@@ -1,93 +1,78 @@
-import { Alert, Text, View, BackHandler } from "react-native";
+import { ScrollView, View } from "react-native";
 import ThemedView from "../../../components/ThemedView";
-import { router } from "expo-router";
 import PressableButton from "../../../components/PressableButton";
 import ThemedText from "../../../components/ThemedText";
 import { Colors } from "../../../constants/Colors";
-import ThemedInput from "../../../components/ThemedInput";
 import { useState } from "react";
+import ThemedInput from "../../../components/ThemedInput";
 import { useWorkouts } from "../../../hooks/useWorkouts";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import ExerciseCard from "../../../components/GUI/Cards/ExerciseCard";
+import { router } from "expo-router";
 import StatusIndicator from "../../../components/StatusIndicator";
 import SuccessCard from "../../../components/GUI/Cards/SuccessCard";
 import ErrorCard from "../../../components/GUI/Cards/ErrorCard";
 
 const WorkoutForm = () => {
-  const { createExercise } = useWorkouts();
-  const maxChars = 128;
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [chars, setChars] = useState(0);
-  const [error, setError] = useState("");
-  const [webError, setWebError] = useState(null);
+  const [filter, setFilter] = useState("");
+  const [exercisesList, setExercisesList] = useState([]);
   const [webMessage, setWebMessage] = useState(null);
+  const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [webError, setWebError] = useState(null);
+  const { exercises, createWorkout } = useWorkouts();
 
-  function handleDescription(text) {
-    if (text.length <= maxChars) {
-      setDescription(text);
-      setChars(text.length);
-    }
+  function appendArray(id) {
+    setExercisesList([...exercisesList, id]);
   }
 
-  const handleReturn = () => {
-    if (name.length > 0 || description.length > 0) {
-      Alert.alert(
-        "Return",
-        "Are you sure you want to return?\nAll progress will be lost.",
-        [
-          {
-            text: "Cancel",
-            onPress: () => null,
-          },
-          {
-            text: "Return",
-            onPress: () => ret(),
-          },
-        ],
-      );
+  function removeArray(exercise_id) {
+    setExercisesList(
+      exercisesList.filter((exercise) => exercise !== exercise_id),
+    );
+  }
+
+  function isInList(exercise_id) {
+    if (exercisesList.find((exercisesList) => exercisesList === exercise_id)) {
       return true;
-    } else {
-      ret();
     }
-  };
-
-  const backHandler = BackHandler.addEventListener(
-    "hardwareBackPress",
-    handleReturn,
-  );
-
-  function ret() {
-    backHandler.remove();
-    router.back();
+    return false;
   }
 
-  function validateExercise() {
-    if (!name) {
-      setError("Name is required");
-    } else {
-      setError(null);
+  function isValid() {
+    let errors = {};
+    if (!name || name === "") errors.name = "Name can't be empty.";
+    if (exercisesList === undefined || exercisesList.length === 0) {
+      errors.exercises = "You must select at least one exercise";
     }
-    return error.length === 0;
+    setErrors(errors);
+
+    return Object.keys(errors).length === 0;
   }
 
-  async function submitExercise() {
+  async function handleSubmit() {
+    setWebMessage(null);
     setWebError(null);
     setIsLoading(true);
-    setWebMessage(null);
     try {
-      if (validateExercise()) {
-        const message = await createExercise(name, description);
-        setWebMessage(message);
+      if (isValid()) {
+        const response = await createWorkout(name, exercisesList);
         setName("");
-        setDescription("");
-        setError("");
-        setChars(0);
+        setExercisesList([]);
+        setWebMessage(response);
       }
-    } catch {
+    } catch (error) {
       setWebError(error.message);
     } finally {
       setIsLoading(false);
     }
+  }
+
+  function handleReturn() {
+    setName("");
+    setExercisesList([]);
+    router.back();
   }
 
   return (
@@ -105,51 +90,69 @@ const WorkoutForm = () => {
           </ThemedText>
         </PressableButton>
         <ThemedText bold className="pl-4 text-4xl">
-          NEW EXERCISE
+          NEW WORKOUT
         </ThemedText>
       </View>
       <View className="p-4">
-        <ThemedText className="p-1 text-lg opacity-65">
-          EXERCISE NAME
-        </ThemedText>
+        <ThemedText className="p-1 text-lg opacity-65">WORKOUT NAME</ThemedText>
         <ThemedInput
-          placeholder="Incline dumbell press"
+          placeholder="Back and Biceps"
           onChangeText={setName}
           value={name}
           style={{ backgroundColor: Colors.surface }}
           className="rounded-[4vw] text-lg focus:border-amber-500 h-16 border-gray-300 border-2"
         ></ThemedInput>
-        {error ? (
+        {errors.name ? (
           <ThemedText
             bold
             style={{ color: Colors.errorText }}
             className="w-full text-left"
           >
-            {error}
+            {errors.name}
           </ThemedText>
         ) : null}
-        <ThemedText className="p-1 pt-4 text-lg opacity-65">
-          Notes / Cues (optional)
+        <View className="py-3 border-b border-gray-400"></View>
+        <ThemedText className="p-1 pt-3 text-lg opacity-65">
+          ADD EXERCISES
         </ThemedText>
-        <View>
+        <View
+          style={{ backgroundColor: Colors.surface }}
+          className="flex-row w-full justify-center items-center h-16 rounded-[4vw] border-gray-300 border-2"
+        >
+          <Ionicons name="search" size={24} />
           <ThemedInput
-            placeholder="Keep your elbows at a 45 degree angle."
-            value={description}
-            onChangeText={handleDescription}
-            style={{ backgroundColor: Colors.surface }}
-            textAlignVertical="top"
-            maxLength={maxChars}
-            multiline={true}
-            className="rounded-[4vw] text-lg h-48 focus:border-amber-500 border-gray-300 border-2"
-          ></ThemedInput>
-          <ThemedText className="text-right">
-            {chars}/{maxChars}
-          </ThemedText>
+            placeholder="Search exercises..."
+            className="w-5/6 h-14 rounded-[4vw] text-lg"
+          />
         </View>
-      </View>
-      <View className="pt-4 px-4">
-        <PressableButton onPress={submitExercise} className="h-24">
-          <ThemedText bold className="text-xl">
+        {errors.exercises ? (
+          <ThemedText
+            bold
+            style={{ color: Colors.errorText }}
+            className="w-full text-left"
+          >
+            {errors.exercises}
+          </ThemedText>
+        ) : null}
+        <ScrollView className="h-80 mb-2 mt-2">
+          {exercises
+            ? exercises.map((exercise, index) => (
+                <ExerciseCard
+                  exercise={exercise}
+                  appendArray={appendArray}
+                  removeArray={removeArray}
+                  isAdded={isInList(exercise.exercise_id)}
+                ></ExerciseCard>
+              ))
+            : null}
+        </ScrollView>
+        <View className="pb-4 border-t border-gray-400"></View>
+        <PressableButton onPress={handleSubmit} className="h-20">
+          <ThemedText
+            bold
+            style={{ color: Colors.surface }}
+            className="text-xl "
+          >
             Submit
           </ThemedText>
         </PressableButton>
