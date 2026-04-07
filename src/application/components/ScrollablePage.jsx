@@ -21,7 +21,7 @@ const ScrollablePage = ({ style, children, safeView = true, ...props }) => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ThemedView style={{ flex: 1 }}>
-          <ScrollView>{children}</ScrollView>
+          <ScrollView {...props}>{children}</ScrollView>
         </ThemedView>
       </KeyboardAvoidingView>
     );

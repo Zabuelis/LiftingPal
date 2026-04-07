@@ -23,18 +23,28 @@ const ExerciseCard = ({ exercise, ...props }) => {
           {props.isAdded ? (
             <PressableButton
               onPress={() => props.removeArray(exercise.exercise_id)}
-              style={{ backgroundColor: Colors.secondaryButton }}
-              className="rounded-[3vw] w-12 h-12"
+              className="active:bg-green-600 bg-green-500 rounded-[3vw] w-12 h-12"
             >
-              <ThemedText bold>✓</ThemedText>
+              <ThemedText
+                style={{ color: Colors.surface }}
+                className="text-xl"
+                bold
+              >
+                ✓
+              </ThemedText>
             </PressableButton>
           ) : (
             <PressableButton
               onPress={() => props.appendArray(exercise.exercise_id)}
-              style={{ backgroundColor: Colors.secondaryButton }}
               className="rounded-[3vw] w-12 h-12"
             >
-              <ThemedText bold>+</ThemedText>
+              <ThemedText
+                style={{ color: Colors.surface }}
+                className="text-2xl"
+                bold
+              >
+                +
+              </ThemedText>
             </PressableButton>
           )}
         </View>

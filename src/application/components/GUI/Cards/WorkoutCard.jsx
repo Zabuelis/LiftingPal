@@ -41,13 +41,17 @@ const WorkoutCard = ({ object, style, ...props }) => {
         </ThemedText>
         <View className="flex-row items-center justify-between">
           <PressableButton className="h-12 mx-2 w-20" onPress={handleEdit}>
-            <ThemedText bold>Edit</ThemedText>
+            <ThemedText style={{ color: Colors.surface }} bold>
+              Edit
+            </ThemedText>
           </PressableButton>
           <PressableButton
             onPress={handleDelete}
             className="bg-red-400 h-12 w-20"
           >
-            <ThemedText bold>Delete</ThemedText>
+            <ThemedText style={{ color: Colors.surface }} bold>
+              Delete
+            </ThemedText>
           </PressableButton>
         </View>
       </View>
@@ -59,7 +63,9 @@ const WorkoutCard = ({ object, style, ...props }) => {
                 key={key}
                 className="m-2 px-4 justify-center py-2 rounded-[4vw] border-gray-300 border-2"
               >
-                <ThemedText>{exercise}</ThemedText>
+                <ThemedText className="w-32 text-center" numberOfLines={1}>
+                  {exercise}
+                </ThemedText>
               </View>
             ))
           : null}
@@ -86,8 +92,14 @@ const WorkoutCard = ({ object, style, ...props }) => {
       {object.exercise_names ? (
         <View className="items-end mt-auto pb-2 pr-2">
           <PressableButton className="flex-row w-1/3 justify-center py-2 px-4">
-            <Ionicons name="play-outline" size={24} />
-            <ThemedText bold>START</ThemedText>
+            <Ionicons
+              style={{ color: Colors.surface }}
+              name="play-outline"
+              size={24}
+            />
+            <ThemedText style={{ color: Colors.surface }} bold>
+              START
+            </ThemedText>
           </PressableButton>
         </View>
       ) : null}

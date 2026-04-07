@@ -8,7 +8,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import WorkoutCard from "../Cards/WorkoutCard";
 import { useWorkouts } from "../../../hooks/useWorkouts";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import SuccessCard from "../Cards/SuccessCard";
 import ErrorCard from "../Cards/ErrorCard";
 
@@ -16,6 +16,7 @@ const ExercisesView = () => {
   const { exercises, deleteExercise } = useWorkouts();
   const [webError, setWebError] = useState(null);
   const [webMessage, setWebMessage] = useState(null);
+  const pageTop = useRef(0);
 
   async function removeExercise(exercise_id) {
     setWebError(null);
@@ -25,6 +26,8 @@ const ExercisesView = () => {
       setWebMessage(message);
     } catch (error) {
       setWebError(error.message);
+    } finally {
+      pageTop.current?.scrollTo({ y: 0, animated: true });
     }
   }
 
@@ -40,7 +43,7 @@ const ExercisesView = () => {
   }
 
   return (
-    <ScrollablePage safeView={false}>
+    <ScrollablePage ref={pageTop} safeView={false}>
       {webMessage ? <SuccessCard message={webMessage}></SuccessCard> : null}
       {webError ? <ErrorCard error={webError}></ErrorCard> : null}
       <View className="py-6 px-4 flex-row items-center justify-between">

@@ -7,15 +7,17 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { View } from "react-native";
 import WorkoutCard from "../Cards/WorkoutCard";
 import { useWorkouts } from "../../../hooks/useWorkouts";
-import { useState } from "react";
+import React, { useState } from "react";
 import SuccessCard from "../Cards/SuccessCard";
 import ErrorCard from "../Cards/ErrorCard";
 import { router } from "expo-router";
+import { useRef } from "react";
 
 const WorkoutsView = () => {
   const { workouts, deleteWorkout } = useWorkouts({});
   const [webMessage, setWebMessage] = useState(null);
   const [webError, setWebError] = useState(null);
+  const pageTop = useRef(0);
 
   async function removeWorkout(workout_id) {
     setWebError(null);
@@ -25,6 +27,8 @@ const WorkoutsView = () => {
       setWebMessage(message);
     } catch (error) {
       setWebError(error.message);
+    } finally {
+      pageTop.current?.scrollTo({ y: 0, animated: true });
     }
   }
 
@@ -32,9 +36,16 @@ const WorkoutsView = () => {
     router.push("/workoutForm");
   }
 
+  function handleEdit(id) {
+    router.push({
+      pathname: "/workoutForm",
+      params: { id },
+    });
+  }
+
   return (
-    <ScrollablePage safeView={false}>
-      {webMessage ? <SuccessCard webMessage={webMessage}></SuccessCard> : null}
+    <ScrollablePage ref={pageTop} safeView={false}>
+      {webMessage ? <SuccessCard message={webMessage}></SuccessCard> : null}
       {webError ? <ErrorCard error={webError}></ErrorCard> : null}
       <View className="py-6 px-4 flex-row items-center justify-between">
         <ThemedText bold className="text-3xl">
@@ -64,6 +75,7 @@ const WorkoutsView = () => {
               object={workout}
               key={index}
               delete={removeWorkout}
+              edit={handleEdit}
             ></WorkoutCard>
           ))
         ) : (

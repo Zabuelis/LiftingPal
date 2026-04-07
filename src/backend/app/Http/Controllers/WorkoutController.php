@@ -67,7 +67,6 @@ class WorkoutController extends Controller
         $workoutForm = [
             'user_id' => Auth::user()->user_id,
             'name' => $validated['name'],
-            'description' => $validated['description'],
         ];
         // Tie workout with exercises (M->N) using Workout_Exercise table
         try {
@@ -101,7 +100,6 @@ class WorkoutController extends Controller
         $validated = $request->validate([
             'name' => 'required',
             'exercise_ids' => 'required|array',
-            'exercise_names' => 'nullable'
         ]);
 
         try {
@@ -124,11 +122,6 @@ class WorkoutController extends Controller
         }
 
         $workout->name = $validated['name'];
-        if(!empty($validated['description'])){
-            $workout->description = $validated['description'];
-        } else {
-            $workout->description = "";
-        }
         $workout->update();
 
         // Handle a situation where exercise or workout is deleted mid update
@@ -136,15 +129,15 @@ class WorkoutController extends Controller
             WorkoutExercise::where('workout_id', $id)->delete();
 
             foreach($validated['exercise_ids'] as $exercise_id){
-            WorkoutExercise::insert([
-                'workout_id' => $id,
-                'exercise_id' => $exercise_id,
-            ]);
+                WorkoutExercise::insert([
+                    'workout_id' => $id,
+                    'exercise_id' => $exercise_id,
+                ]);
+            }
 
             return response()->json([
                 'success' => 'Workout updated successfully.'
             ]);
-        }
         } catch (Exception $e) {
             Log::error("Workout or exercise was removed mid update", [
                 'message' => $e,

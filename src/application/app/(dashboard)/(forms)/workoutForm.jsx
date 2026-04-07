@@ -1,14 +1,14 @@
-import { ScrollView, View } from "react-native";
+import { Alert, BackHandler, ScrollView, View } from "react-native";
 import ThemedView from "../../../components/ThemedView";
 import PressableButton from "../../../components/PressableButton";
 import ThemedText from "../../../components/ThemedText";
 import { Colors } from "../../../constants/Colors";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import ThemedInput from "../../../components/ThemedInput";
 import { useWorkouts } from "../../../hooks/useWorkouts";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import ExerciseCard from "../../../components/GUI/Cards/ExerciseCard";
-import { router } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import StatusIndicator from "../../../components/StatusIndicator";
 import SuccessCard from "../../../components/GUI/Cards/SuccessCard";
 import ErrorCard from "../../../components/GUI/Cards/ErrorCard";
@@ -21,8 +21,66 @@ const WorkoutForm = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [webError, setWebError] = useState(null);
-  const { exercises, createWorkout } = useWorkouts();
+  const { exercises, createWorkout, workouts, updateWorkout } = useWorkouts();
+  const [isEdit, setIsEdit] = useState(false);
+  const { id } = useLocalSearchParams();
 
+  // On focus check wether it is an edit or a create operation
+  useFocusEffect(
+    useCallback(() => {
+      if (id) {
+        const workout = workouts.find(
+          (workout) => workout.workout_id === Number(id),
+        );
+        if (workout) {
+          setIsEdit(true);
+          setName(workout.name);
+          setExercisesList(workout.exercise_ids);
+        }
+      } else {
+        setIsEdit(false);
+      }
+    }, [id]),
+  );
+
+  // Handle the return based on wether the fields are empty or not
+  const handleReturn = () => {
+    if (
+      (name && name.length > 0) ||
+      (exercisesList && exercisesList.length > 0)
+    ) {
+      Alert.alert(
+        "Return",
+        "Are you sure you want to return?\nAll progress will be lost.",
+        [
+          {
+            text: "Cancel",
+            onPress: () => null,
+          },
+          {
+            text: "Return",
+            onPress: () => ret(),
+          },
+        ],
+      );
+      return true;
+    } else {
+      ret();
+    }
+  };
+
+  const backHandler = BackHandler.addEventListener(
+    "hardwareBackPress",
+    handleReturn,
+  );
+
+  function clearFields() {
+    setName("");
+    setExercisesList([]);
+    setErrors({});
+  }
+
+  // Append, filter, remove from exercisesList array
   function appendArray(id) {
     setExercisesList([...exercisesList, id]);
   }
@@ -44,7 +102,7 @@ const WorkoutForm = () => {
     let errors = {};
     if (!name || name === "") errors.name = "Name can't be empty.";
     if (exercisesList === undefined || exercisesList.length === 0) {
-      errors.exercises = "You must select at least one exercise";
+      errors.exercises = "You must select at least one exercise.";
     }
     setErrors(errors);
 
@@ -56,11 +114,19 @@ const WorkoutForm = () => {
     setWebError(null);
     setIsLoading(true);
     try {
-      if (isValid()) {
-        const response = await createWorkout(name, exercisesList);
-        setName("");
-        setExercisesList([]);
-        setWebMessage(response);
+      if (!isEdit) {
+        if (isValid()) {
+          const response = await createWorkout(name, exercisesList);
+          clearFields();
+          setWebMessage(response);
+        }
+      } else {
+        if (isValid()) {
+          const response = await updateWorkout(id, name, exercisesList);
+          setWebMessage(response);
+          clearFields();
+          setIsEdit(false);
+        }
       }
     } catch (error) {
       setWebError(error.message);
@@ -69,9 +135,11 @@ const WorkoutForm = () => {
     }
   }
 
-  function handleReturn() {
-    setName("");
-    setExercisesList([]);
+  function ret() {
+    clearFields();
+    backHandler.remove();
+    setWebError(null);
+    setWebMessage(null);
     router.back();
   }
 

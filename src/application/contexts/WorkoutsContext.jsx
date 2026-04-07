@@ -48,10 +48,9 @@ export function WorkoutsProvider({ children }) {
     try {
       const response = await api.post("/createWorkout", {
         name,
-        description: "",
         exercise_ids: exercises,
       });
-      fetchWorkouts();
+      await fetchWorkouts();
       return response.data.success;
     } catch (error) {
       const message = handleErrorResponse(error);
@@ -73,9 +72,34 @@ export function WorkoutsProvider({ children }) {
     }
   }
 
-  async function updateWorkout(name, description, id) {}
+  async function updateWorkout(id, name, exercises) {
+    try {
+      const response = await api.put("/updateWorkout/" + id, {
+        id,
+        name,
+        exercise_ids: exercises,
+      });
+      await fetchWorkouts();
+      return response.data.success;
+    } catch (error) {
+      const message = handleErrorResponse(error);
+      throw new Error(message);
+    }
+  }
 
-  async function deleteWorkout(id) {}
+  async function deleteWorkout(id) {
+    try {
+      const response = await api.delete("/deleteWorkout/" + id);
+      const newWorkouts = workouts.filter(
+        (workout) => workout.workout_id !== id,
+      );
+      setWorkouts(newWorkouts);
+      return response.data.success;
+    } catch (error) {
+      const message = handleErrorResponse(error);
+      throw new Error(message);
+    }
+  }
 
   async function deleteExercise(id) {
     try {
@@ -86,7 +110,8 @@ export function WorkoutsProvider({ children }) {
       setExercises(newExercises);
       return response.data.success;
     } catch (error) {
-      console.log(error);
+      const message = handleErrorResponse(error);
+      throw new Error(message);
     }
   }
 
@@ -112,6 +137,7 @@ export function WorkoutsProvider({ children }) {
         createExercise,
         updateExercise,
         createWorkout,
+        updateWorkout,
       }}
     >
       {children}

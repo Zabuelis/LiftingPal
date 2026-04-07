@@ -1,11 +1,11 @@
 import { Alert, Text, View, BackHandler } from "react-native";
 import ThemedView from "../../../components/ThemedView";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import PressableButton from "../../../components/PressableButton";
 import ThemedText from "../../../components/ThemedText";
 import { Colors } from "../../../constants/Colors";
 import ThemedInput from "../../../components/ThemedInput";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useWorkouts } from "../../../hooks/useWorkouts";
 import StatusIndicator from "../../../components/StatusIndicator";
 import SuccessCard from "../../../components/GUI/Cards/SuccessCard";
@@ -24,21 +24,23 @@ const ExerciseForm = () => {
   const [isEdit, setIsEdit] = useState(false);
   const { id } = useLocalSearchParams();
 
-  // On id change check wether it is an edit or a create operation
-  useEffect(() => {
-    if (id) {
-      const exercise = exercises.find(
-        (exercise) => exercise.exercise_id === Number(id),
-      );
-      if (exercise) {
-        setIsEdit(true);
-        setName(exercise.name);
-        setDescription(exercise.description);
+  // On focus check wether it is an edit or a create operation
+  useFocusEffect(
+    useCallback(() => {
+      if (id) {
+        const exercise = exercises.find(
+          (exercise) => exercise.exercise_id === Number(id),
+        );
+        if (exercise) {
+          setIsEdit(true);
+          setName(exercise.name);
+          setDescription(exercise.description);
+        }
+      } else {
+        setIsEdit(false);
       }
-    } else {
-      setIsEdit(false);
-    }
-  }, [id]);
+    }, [id]),
+  );
 
   // Dynamically update characters left display
   function handleDescription(text) {
