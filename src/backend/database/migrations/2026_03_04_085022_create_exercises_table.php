@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('exercise_id');
             $table->integer('user_id');
             $table->string('name');
+            $table->string('description', length: 128)->nullable(true);
 
             $table->foreign('user_id')->references('user_id')->on('user')->onDelete('cascade');
         });
