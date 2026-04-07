@@ -33,14 +33,18 @@ const Register = () => {
       errors.password = "Password length required: minimum 8 symbols.";
     if (password != password_confirmation)
       errors.password_confirmation = "Passwords must match.";
-    // if (weight && weight === /^[0-9]$/ && weight > 0) {
-    //   errors.weight =
-    //     "Weight should be a positive number (calculations are only accurate in kg)";
-    // }
-    // if (height && height > 0 && !isNaN(height)) {
-    //   errors.height =
-    //     "Height should be a positive number (calculations are only accurate in cm)";
-    // }
+    if (weight) {
+      if (isNaN(weight) || weight < 0) {
+        errors.weight =
+          "Weight should be a positive number (calculations are only accurate in kg)";
+      }
+    }
+    if (height) {
+      if (isNaN(height) || height < 0) {
+        errors.height =
+          "Height should be a positive number (calculations are only accurate in cm)";
+      }
+    }
 
     setErrors(errors);
 
@@ -96,8 +100,7 @@ const Register = () => {
               style={{ color: Colors.errorText }}
               className="w-full text-left"
             >
-              {" "}
-              {errors.email}{" "}
+              {errors.email}
             </ThemedText>
           ) : null}
         </View>
@@ -116,8 +119,7 @@ const Register = () => {
               style={{ color: Colors.errorText }}
               className="w-full text-left"
             >
-              {" "}
-              {errors.name}{" "}
+              {errors.name}
             </ThemedText>
           ) : null}
         </View>
@@ -137,8 +139,7 @@ const Register = () => {
               style={{ color: Colors.errorText }}
               className="w-full text-left"
             >
-              {" "}
-              {errors.password}{" "}
+              {errors.password}
             </ThemedText>
           ) : null}
         </View>
