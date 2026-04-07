@@ -47,7 +47,6 @@ class WorkoutController extends Controller
     public function create(Request $request){
         $validated = $request->validate([
             'name' => 'required',
-            'description' => 'nullable',
             'exercise_ids' => 'required|array',
         ]);
 
@@ -101,7 +100,6 @@ class WorkoutController extends Controller
     public function update(Request $request, $id){
         $validated = $request->validate([
             'name' => 'required',
-            'description' => 'nullable',
             'exercise_ids' => 'required|array',
             'exercise_names' => 'nullable'
         ]);
