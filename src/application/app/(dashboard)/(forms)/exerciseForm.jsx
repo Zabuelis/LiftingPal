@@ -10,6 +10,7 @@ import { useWorkouts } from "../../../hooks/useWorkouts";
 import StatusIndicator from "../../../components/StatusIndicator";
 import SuccessCard from "../../../components/GUI/Cards/SuccessCard";
 import ErrorCard from "../../../components/GUI/Cards/ErrorCard";
+import filterList from "../../../lib/filterList";
 
 const ExerciseForm = () => {
   const { createExercise, updateExercise, exercises } = useWorkouts();

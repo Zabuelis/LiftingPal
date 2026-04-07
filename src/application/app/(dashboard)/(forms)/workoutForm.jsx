@@ -12,6 +12,7 @@ import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import StatusIndicator from "../../../components/StatusIndicator";
 import SuccessCard from "../../../components/GUI/Cards/SuccessCard";
 import ErrorCard from "../../../components/GUI/Cards/ErrorCard";
+import filterList from "../../../lib/filterList";
 
 const WorkoutForm = () => {
   const [name, setName] = useState("");
@@ -24,6 +25,7 @@ const WorkoutForm = () => {
   const { exercises, createWorkout, workouts, updateWorkout } = useWorkouts();
   const [isEdit, setIsEdit] = useState(false);
   const { id } = useLocalSearchParams();
+  const filteredExercises = filterList(exercises, filter);
 
   // On focus check wether it is an edit or a create operation
   useFocusEffect(
@@ -76,6 +78,7 @@ const WorkoutForm = () => {
 
   function clearFields() {
     setName("");
+    setFilter("");
     setExercisesList([]);
     setErrors({});
   }
@@ -189,6 +192,8 @@ const WorkoutForm = () => {
         >
           <Ionicons name="search" size={24} />
           <ThemedInput
+            value={filter}
+            onChangeText={setFilter}
             placeholder="Search exercises..."
             className="w-5/6 h-14 rounded-[4vw] text-lg"
           />
@@ -203,16 +208,20 @@ const WorkoutForm = () => {
           </ThemedText>
         ) : null}
         <ScrollView className="h-80 mb-2 mt-2">
-          {exercises
-            ? exercises.map((exercise, index) => (
-                <ExerciseCard
-                  exercise={exercise}
-                  appendArray={appendArray}
-                  removeArray={removeArray}
-                  isAdded={isInList(exercise.exercise_id)}
-                ></ExerciseCard>
-              ))
-            : null}
+          {filteredExercises.length > 0 ? (
+            filteredExercises.map((exercise, index) => (
+              <ExerciseCard
+                exercise={exercise}
+                appendArray={appendArray}
+                removeArray={removeArray}
+                isAdded={isInList(exercise.exercise_id)}
+              ></ExerciseCard>
+            ))
+          ) : (
+            <ThemedText bold className="text-center text-lg">
+              Oops... Nothing
+            </ThemedText>
+          )}
         </ScrollView>
         <View className="pb-4 border-t border-gray-400"></View>
         <PressableButton onPress={handleSubmit} className="h-20">

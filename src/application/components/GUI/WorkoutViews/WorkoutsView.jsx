@@ -7,16 +7,18 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { View } from "react-native";
 import WorkoutCard from "../Cards/WorkoutCard";
 import { useWorkouts } from "../../../hooks/useWorkouts";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SuccessCard from "../Cards/SuccessCard";
 import ErrorCard from "../Cards/ErrorCard";
 import { router } from "expo-router";
 import { useRef } from "react";
+import filterList from "../../../lib/filterList";
 
 const WorkoutsView = () => {
   const { workouts, deleteWorkout } = useWorkouts({});
   const [webMessage, setWebMessage] = useState(null);
   const [webError, setWebError] = useState(null);
+  const [filter, setFilter] = useState("");
   const pageTop = useRef(0);
 
   async function removeWorkout(workout_id) {
@@ -43,6 +45,8 @@ const WorkoutsView = () => {
     });
   }
 
+  const filteredWorkouts = filterList(workouts, filter);
+
   return (
     <ScrollablePage ref={pageTop} safeView={false}>
       {webMessage ? <SuccessCard message={webMessage}></SuccessCard> : null}
@@ -64,13 +68,15 @@ const WorkoutsView = () => {
         >
           <Ionicons name="search" size={24} />
           <ThemedInput
+            value={filter}
+            onChangeText={setFilter}
             placeholder="Search workouts..."
             className="w-5/6 h-14 rounded-[4vw]"
           />
         </View>
         {/* Workout cards */}
-        {workouts ? (
-          workouts.map((workout, index) => (
+        {filteredWorkouts.length > 0 ? (
+          filteredWorkouts.map((workout, index) => (
             <WorkoutCard
               object={workout}
               key={index}

@@ -11,10 +11,12 @@ import { router } from "expo-router";
 import { useRef, useState } from "react";
 import SuccessCard from "../Cards/SuccessCard";
 import ErrorCard from "../Cards/ErrorCard";
+import filterList from "../../../lib/filterList";
 
 const ExercisesView = () => {
   const { exercises, deleteExercise } = useWorkouts();
   const [webError, setWebError] = useState(null);
+  const [filter, setFilter] = useState("");
   const [webMessage, setWebMessage] = useState(null);
   const pageTop = useRef(0);
 
@@ -42,6 +44,8 @@ const ExercisesView = () => {
     });
   }
 
+  const filteredExercises = filterList(exercises, filter);
+
   return (
     <ScrollablePage ref={pageTop} safeView={false}>
       {webMessage ? <SuccessCard message={webMessage}></SuccessCard> : null}
@@ -64,14 +68,16 @@ const ExercisesView = () => {
         >
           <Ionicons name="search" size={24} />
           <ThemedInput
+            value={filter}
+            onChangeText={setFilter}
             placeholder="Search exercises..."
             className="w-5/6 h-14 rounded-[4vw]"
           />
         </View>
         {/* Workout cards */}
 
-        {exercises ? (
-          exercises.map((exercise, index) => (
+        {filteredExercises.length > 0 ? (
+          filteredExercises.map((exercise, index) => (
             <WorkoutCard
               object={exercise}
               key={index}
