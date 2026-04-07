@@ -16,6 +16,8 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [password_confirmation, setPasswordConfirmation] = useState("");
   const [name, setName] = useState("");
+  const [weight, setWeight] = useState(null);
+  const [height, setHeight] = useState(null);
   const [errors, setErrors] = useState({});
   const pageTop = useRef(0);
 
@@ -31,6 +33,14 @@ const Register = () => {
       errors.password = "Password length required: minimum 8 symbols.";
     if (password != password_confirmation)
       errors.password_confirmation = "Passwords must match.";
+    // if (weight && weight === /^[0-9]$/ && weight > 0) {
+    //   errors.weight =
+    //     "Weight should be a positive number (calculations are only accurate in kg)";
+    // }
+    // if (height && height > 0 && !isNaN(height)) {
+    //   errors.height =
+    //     "Height should be a positive number (calculations are only accurate in cm)";
+    // }
 
     setErrors(errors);
 
@@ -42,7 +52,14 @@ const Register = () => {
     setIsLoading(true);
     try {
       if (validateRegister()) {
-        await register(name, email, password, password_confirmation);
+        await register(
+          name,
+          email,
+          password,
+          password_confirmation,
+          height,
+          weight,
+        );
         setEmail("");
         setName("");
         setPassword("");
@@ -143,11 +160,57 @@ const Register = () => {
               style={{ color: Colors.errorText }}
               className="w-full text-left"
             >
-              {" "}
-              {errors.password_confirmation}{" "}
+              {errors.password_confirmation}
             </ThemedText>
           ) : null}
         </View>
+
+        <ThemedText className="opacity-65 text-md pb-1">
+          WEIGHT (Optional)
+        </ThemedText>
+        <View className="flex items-center pb-6">
+          <ThemedInput
+            placeholder="70 (KG)"
+            inputMode={"decimal"}
+            onChangeText={setWeight}
+            value={weight}
+            style={{ backgroundColor: Colors.surface }}
+            className="w-full focus:border-amber-500 rounded-[4vw] h-16 border-gray-300 border-2"
+          ></ThemedInput>
+          {errors.weight ? (
+            <ThemedText
+              bold
+              style={{ color: Colors.errorText }}
+              className="w-full text-left"
+            >
+              {errors.weight}
+            </ThemedText>
+          ) : null}
+        </View>
+
+        <ThemedText className="opacity-65 text-md pb-1">
+          HEIGHT (Optional)
+        </ThemedText>
+        <View className="flex items-center pb-6">
+          <ThemedInput
+            placeholder="180 (CM)"
+            onChangeText={setHeight}
+            inputMode={"decimal"}
+            value={height}
+            style={{ backgroundColor: Colors.surface }}
+            className="w-full focus:border-amber-500 rounded-[4vw] h-16 border-gray-300 border-2"
+          ></ThemedInput>
+          {errors.height ? (
+            <ThemedText
+              bold
+              style={{ color: Colors.errorText }}
+              className="w-full text-left"
+            >
+              {errors.height}
+            </ThemedText>
+          ) : null}
+        </View>
+
         <ThemedText theme className="pb-4 text-right">
           <Link href="/register">Forgot password?</Link>
         </ThemedText>

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
+            $table->float('weight', precision: 2)->nullable(true);
+            $table->float('height', precision: 2)->nullable(true);
             $table->rememberToken();
             $table->timestamps();
         });

@@ -17,7 +17,7 @@ class WorkoutController extends Controller
     private $missingExercisesErrorMsg = 'Failed to create the workout. Provided exercises do not exist.';
     private $updateFailureErrorMsg = 'Failed to update the workout, please try again later.';
 
-    public function view(){
+public function view(){
         // Join workout_exercise, workout, exercise tables to return object with field exercise_names
         $workouts = Workout::leftJoin('workout_exercise', 'workout.workout_id', '=', 'workout_exercise.workout_id')
             ->leftJoin('exercise', 'workout_exercise.exercise_id', '=', 'exercise.exercise_id')
@@ -25,6 +25,7 @@ class WorkoutController extends Controller
                 DB::raw("JSON_AGG(exercise.name) as exercise_names"),
                 DB::raw("JSON_AGG(exercise.exercise_id) as exercise_ids"))
             ->where('workout.user_id', Auth::user()->user_id)
+            ->where('workout_exercise.exercise_id', '!=', null)
             ->groupBy('workout.workout_id')
             ->orderBy('workout.name', 'asc')
             ->get();
@@ -33,7 +34,7 @@ class WorkoutController extends Controller
                 'error' => $this->missingWorkoutErrorMsg
             ]);
         } else{
-             return response()->json([
+            return response()->json([
                 'workouts' => $workouts
             ]);
         }

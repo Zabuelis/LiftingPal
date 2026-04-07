@@ -3,7 +3,7 @@ import { Text } from "react-native";
 
 const Profile = () => {
   return (
-    <ThemedView safe className="flex items-center justify-center">
+    <ThemedView safe className="flex-1 items-center justify-center">
       <Text className="text-center">This is the profile page</Text>
     </ThemedView>
   );

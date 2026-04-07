@@ -61,7 +61,7 @@ const DashboardLayout = () => {
             }}
           />
           <Tabs.Screen
-            name="(forms)"
+            name="forms"
             options={{
               href: null,
             }}

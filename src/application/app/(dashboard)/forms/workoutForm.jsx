@@ -143,7 +143,7 @@ const WorkoutForm = () => {
     backHandler.remove();
     setWebError(null);
     setWebMessage(null);
-    router.back();
+    router.navigate("/workouts");
   }
 
   return (
@@ -212,6 +212,7 @@ const WorkoutForm = () => {
             filteredExercises.map((exercise, index) => (
               <ExerciseCard
                 exercise={exercise}
+                key={index}
                 appendArray={appendArray}
                 removeArray={removeArray}
                 isAdded={isInList(exercise.exercise_id)}
@@ -219,7 +220,7 @@ const WorkoutForm = () => {
             ))
           ) : (
             <ThemedText bold className="text-center text-lg">
-              Oops... Nothing
+              Oops... Nothing here.
             </ThemedText>
           )}
         </ScrollView>

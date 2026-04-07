@@ -91,7 +91,7 @@ const ExerciseForm = () => {
     backHandler.remove();
     setWebError(null);
     setWebMessage(null);
-    router.back();
+    router.navigate("/workouts");
   }
 
   function isValid() {

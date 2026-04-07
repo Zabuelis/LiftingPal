@@ -34,12 +34,12 @@ const ExercisesView = () => {
   }
 
   function handleCreate() {
-    router.push("/exerciseForm");
+    router.replace("/forms/exerciseForm");
   }
 
   function handleEdit(id) {
-    router.push({
-      pathname: "/exerciseForm",
+    router.replace({
+      pathname: "/forms/exerciseForm",
       params: { id },
     });
   }

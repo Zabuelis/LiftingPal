@@ -20,6 +20,7 @@ const WorkoutsView = () => {
   const [webError, setWebError] = useState(null);
   const [filter, setFilter] = useState("");
   const pageTop = useRef(0);
+  const filteredWorkouts = filterList(workouts, filter);
 
   async function removeWorkout(workout_id) {
     setWebError(null);
@@ -35,17 +36,15 @@ const WorkoutsView = () => {
   }
 
   function handleCreate() {
-    router.push("/workoutForm");
+    router.replace("/forms/workoutForm");
   }
 
   function handleEdit(id) {
-    router.push({
-      pathname: "/workoutForm",
+    router.replace({
+      pathname: "/forms/workoutForm",
       params: { id },
     });
   }
-
-  const filteredWorkouts = filterList(workouts, filter);
 
   return (
     <ScrollablePage ref={pageTop} safeView={false}>

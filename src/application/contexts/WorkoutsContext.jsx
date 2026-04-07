@@ -107,6 +107,14 @@ export function WorkoutsProvider({ children }) {
       const newExercises = exercises.filter(
         (exercise) => exercise.exercise_id !== id,
       );
+      if (
+        workouts.find((workout) => {
+          workout.exercise_ids === id;
+        })
+      ) {
+        const updatedWorkouts = await fetchWorkouts();
+        setWorkouts(updatedWorkouts);
+      }
       setExercises(newExercises);
       return response.data.success;
     } catch (error) {

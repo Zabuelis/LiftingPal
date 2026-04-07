@@ -8,11 +8,22 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    private $precision = 2;
     public function register(Request $request){
+        // Round up to set precision
+        if($request['weight'] && is_numeric($request['weight'])){
+            $request['weight'] = round($request['weight'], $this->precision);
+        }
+        if($request['height'] && is_numeric($request['height'])){
+            $request['height'] = round($request['height'], $this->precision);
+        }
+
         $validated = $request->validate([
             'name' => 'required|max:255',
             'password' =>  'required|min:8|confirmed',
-            'email' => 'required|email|unique:user'
+            'email' => 'required|email|unique:user',
+            'weight' => 'nullable|gt:0|decimal:0,2',
+            'height' => 'nullable|gt:0|decimal:0,2',
         ]);
 
         $user = User::create($validated);

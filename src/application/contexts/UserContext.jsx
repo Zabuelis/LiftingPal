@@ -22,13 +22,22 @@ export function UserProvider({ children }) {
     }
   }
 
-  async function register(name, email, password, password_confirmation) {
+  async function register(
+    name,
+    email,
+    password,
+    password_confirmation,
+    height,
+    weight,
+  ) {
     try {
       const response = await api.post("/register", {
         name,
         email,
         password,
         password_confirmation,
+        height,
+        weight,
       });
       await SecureStore.setItemAsync("liftingPalToken", response.data.token);
       setUser(response.data.user);
