@@ -1,11 +1,12 @@
 import { createContext, useEffect, useState } from "react";
 import api from "../lib/axios";
 import * as SecureStore from "expo-secure-store";
+import handleErrorResponse from "../lib/webErrorMessages";
 
 export const UserContext = createContext();
 
 export function UserProvider({ children }) {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
 
   async function login(email, password) {
@@ -58,11 +59,24 @@ export function UserProvider({ children }) {
     }
   }
 
+  async function updateBodyStats(height, weight) {
+    try {
+      const response = await api.put("/updateBodyStats", {
+        height,
+        weight,
+      });
+      getInitialUserValue();
+    } catch (error) {
+      const message = handleErrorResponse(error);
+      throw new Error(message);
+    }
+  }
+
   // Query user information (validates the token as well)
   async function getInitialUserValue() {
     try {
       const response = await api.get("/getUserData");
-      setUser(response);
+      setUser(response.data.user);
     } catch (error) {
       setUser(null);
       const token = await SecureStore.getItemAsync("liftingPalToken");
@@ -80,23 +94,9 @@ export function UserProvider({ children }) {
 
   return (
     <UserContext.Provider
-      value={{ user, login, register, logout, authChecked }}
+      value={{ user, login, register, logout, updateBodyStats, authChecked }}
     >
       {children}
     </UserContext.Provider>
   );
-}
-
-function handleErrorResponse(error) {
-  if (!error.response) {
-    return "Connectivity issue detected, please try again later";
-  }
-  // Retreive custom errors
-  if (error.response.data.error) {
-    return error.response.data.error;
-    // Retreive laravel's validation errors
-  } else if (error.response.data.errors) {
-    return Object.values(error.response.data.errors)[0][0];
-  }
-  return "Something went wrong, please try again later";
 }

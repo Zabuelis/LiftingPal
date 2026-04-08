@@ -211,12 +211,7 @@ const Register = () => {
             </ThemedText>
           ) : null}
         </View>
-
-        <ThemedText theme className="pb-4 text-right">
-          <Link href="/register">Forgot password?</Link>
-        </ThemedText>
         <View className="flex items-center">
-          {/* For some reason button component does not apply styles */}
           <PressableButton onPress={handleSubmit} className="w-full h-20">
             <ThemedText
               bold

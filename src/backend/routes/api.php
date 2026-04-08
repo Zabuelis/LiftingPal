@@ -17,6 +17,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // User related routes
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/getUserData', [UserController::class, 'show']);
+    Route::put('/updateBodyStats', [UserController::class, 'updateBodyStats']);
 
     // Exercise related routes
     Route::controller(ExerciseController::class)->group(function (){
