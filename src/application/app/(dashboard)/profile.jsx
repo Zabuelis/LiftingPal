@@ -132,7 +132,7 @@ const Profile = () => {
               style={{ backgroundColor: Colors.surface }}
               className="flex-1 items-center justify-center gap-1 rounded-3xl border border-gray-300"
             >
-              <ThemedText>Some Additional Indicator</ThemedText>
+              <ThemedText></ThemedText>
             </View>
           </View>
           <View className="py-8">

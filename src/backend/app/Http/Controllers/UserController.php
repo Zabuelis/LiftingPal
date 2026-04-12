@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
 
+    private $precision = 1;
     // Return authenticated user information
     public function show(){
         $user = Auth::user();
