@@ -29,16 +29,10 @@ public function view(){
             ->groupBy('workout.workout_id')
             ->orderBy('workout.name', 'asc')
             ->get();
-        if(count($workouts) === 0){
-            return response()->json([
-                'error' => $this->missingWorkoutErrorMsg
-            ]);
-        } else{
-            return response()->json([
-                'workouts' => $workouts
-            ]);
-        }
-
+            
+        return response()->json([
+            'workouts' => $workouts
+        ]);
     }
 
     public function show($id){
@@ -48,7 +42,7 @@ public function view(){
     public function create(Request $request){
         $validated = $request->validate([
             'name' => 'required',
-            'exercise_ids' => 'required|array',
+            'exercise_ids' => 'required|array|min:1',
         ]);
 
         // Validate if all provided exercises exist and belong to the user.
@@ -100,7 +94,7 @@ public function view(){
     public function update(Request $request, $id){
         $validated = $request->validate([
             'name' => 'required',
-            'exercise_ids' => 'required|array',
+            'exercise_ids' => 'required|array|min:1',
         ]);
 
         try {
