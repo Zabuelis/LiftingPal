@@ -107,17 +107,13 @@ export function WorkoutsProvider({ children }) {
       const newExercises = exercises.filter(
         (exercise) => exercise.exercise_id !== id,
       );
-      if (
-        workouts.find((workout) => {
-          workout.exercise_ids === id;
-        })
-      ) {
-        const updatedWorkouts = await fetchWorkouts();
-        setWorkouts(updatedWorkouts);
+      if (workouts?.find((workout) => workout.exercise_ids.includes(id))) {
+        await fetchWorkouts();
       }
       setExercises(newExercises);
       return response.data.success;
     } catch (error) {
+      console.log(error);
       const message = handleErrorResponse(error);
       throw new Error(message);
     }

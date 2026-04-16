@@ -15,10 +15,11 @@ import { useRef } from "react";
 import filterList from "../../../lib/filterList";
 
 const WorkoutsView = () => {
-  const { workouts, deleteWorkout } = useWorkouts({});
+  const { workouts, deleteWorkout, exercises } = useWorkouts({});
   const [webMessage, setWebMessage] = useState(null);
   const [webError, setWebError] = useState(null);
   const [filter, setFilter] = useState("");
+  const [exercisesError, setExercisesError] = useState(null);
   const pageTop = useRef(0);
   const filteredWorkouts = filterList(workouts, filter);
 
@@ -36,7 +37,14 @@ const WorkoutsView = () => {
   }
 
   function handleCreate() {
-    router.replace("/forms/workoutForm");
+    if (exercises === undefined || exercises.length === 0) {
+      setExercisesError(
+        "You need to insert at least one exercice before starting.",
+      );
+    } else {
+      setExercisesError(null);
+      router.replace("/forms/workoutForm");
+    }
   }
 
   function handleEdit(id) {
@@ -50,6 +58,7 @@ const WorkoutsView = () => {
     <ScrollablePage ref={pageTop} safeView={false}>
       {webMessage ? <SuccessCard message={webMessage}></SuccessCard> : null}
       {webError ? <ErrorCard error={webError}></ErrorCard> : null}
+      {exercisesError ? <ErrorCard error={exercisesError}></ErrorCard> : null}
       <View className="py-6 px-4 flex-row items-center justify-between">
         <ThemedText bold className="text-3xl">
           MY WORKOUTS
