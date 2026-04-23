@@ -82,7 +82,7 @@ class ExerciseController extends Controller
 
     public function delete($id){
         try {
-            Exercise::where('exercise_id', $id)->where('user_id', Auth::user()->user_id)->delete();
+            Exercise::where('exercise_id', $id)->where('user_id', Auth::user()->user_id)->firstOrFail()->delete();
             return response()->json([
                 'success' => 'Exercise removed successfully.'
             ]);

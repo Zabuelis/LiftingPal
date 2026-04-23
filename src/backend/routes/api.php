@@ -40,6 +40,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/createWorkoutSession', 'create');
         Route::get('/viewWorkoutSession', 'view');
         Route::delete('/deleteWorkoutSession/{id}', 'delete');
+        Route::put('/updateWorkoutSession/{id}', 'update');
+        Route::get('/showWorkoutSession/{id}', 'show');
     });
 
 });

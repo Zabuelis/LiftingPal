@@ -13,4 +13,10 @@ class WorkoutSession extends Model
     protected  $fillable = [
         'user_id', 'workout_id', 'date', 'duration', 'comments', 'caption'
     ];
+
+    protected $casts = [
+        'exercise_names' => 'array',
+        'exercise_weights' => 'array',
+        'repetitions' => 'array'
+    ];
 }

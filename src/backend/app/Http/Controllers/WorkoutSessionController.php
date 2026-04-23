@@ -9,6 +9,7 @@ use App\Models\Workout;
 use App\Models\Exercise;
 use App\Models\WorkoutSession;
 use App\Models\WorkoutSet;
+use Illuminate\Support\Facades\DB;
 use Exception;
 
 class WorkoutSessionController extends Controller
@@ -23,7 +24,23 @@ class WorkoutSessionController extends Controller
         ]);
     }
 
-    public function show($id){}
+    public function show($id){
+        $workout_session = WorkoutSession::select('caption', 'comments', 'duration', 'date',
+                DB::raw('JSON_AGG(exercise.name) as exercise_names'),
+                DB::raw('JSON_AGG(workout_set.weight) as exercise_weights'),
+                DB::raw('JSON_AGG(workout_set.repetitions) as repetitions'),
+
+            )
+            ->join('workout_set', 'workout_set.session_id', '=', 'workout_session.session_id')
+            ->join('exercise', 'exercise.exercise_id', '=', 'workout_set.exercise_id')
+            ->where('workout_session.session_id', $id)
+            ->where('workout_session.user_id', Auth::user()->user_id)
+            ->groupBy('caption', 'comments', 'duration', 'date')
+            ->get();
+        return response()->json([
+            'workout_session' => $workout_session
+        ]);
+    }
 
     public function create(Request $request){
         $validated = $request->validate([
@@ -31,7 +48,7 @@ class WorkoutSessionController extends Controller
             'date' => 'required|date',
             'duration' => 'required|date_format:H:i:s',
             'comments' => 'nullable|max:128',
-            'caption' => 'required',
+            'caption' => 'required|max:128',
 
             'set' => 'required|array|min:1',
 
@@ -91,11 +108,30 @@ class WorkoutSessionController extends Controller
 
     }
 
-    public function update(Request $request, $id){}
+    public function update(Request $request, $id){
+        $validated = $request->validate([
+            'caption' => 'required|max:128',
+            'comments' => 'nullable|max:128'
+        ]);
+        try {
+            $workoutSession = WorkoutSession::where('session_id', $id)->where('user_id', Auth::user()->user_id)->firstOrFail();
+            $workoutSession->caption = $validated['caption'];
+            $workoutSession->comments = $validated['comments'];
+            $workoutSession->update();
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $this->errorMsg
+            ], 400);
+        }
+
+        return response()->json([
+            'success' => "Workout session updated successfully."
+        ]);
+    }
 
     public function delete($id){
         try {
-            WorkoutSession::where('session_id', $id)->where('user_id', Auth::user()->user_id)->delete();
+            WorkoutSession::where('session_id', $id)->where('user_id', Auth::user()->user_id)->firstOrFail()->delete();
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'Failed to remove the workout session. Please try again later...'

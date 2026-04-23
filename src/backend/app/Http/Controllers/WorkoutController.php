@@ -13,7 +13,6 @@ use Exception;
 
 class WorkoutController extends Controller
 {
-    private $missingWorkoutErrorMsg = 'It appears you have no workouts... Start by adding a new one.';
     private $missingExercisesErrorMsg = 'Failed to create the workout. Provided exercises do not exist.';
     private $updateFailureErrorMsg = 'Failed to update the workout, please try again later.';
 
@@ -146,7 +145,7 @@ public function view(){
 
     public function delete($id){
         try {
-            Workout::where('workout_id', $id)->where('user_id', Auth::user()->user_id)->delete();
+            Workout::where('workout_id', $id)->where('user_id', Auth::user()->user_id)->firstOrFail()->delete();
             return response()->json([
                 'success' => 'Workout removed successfully.'
             ]);
