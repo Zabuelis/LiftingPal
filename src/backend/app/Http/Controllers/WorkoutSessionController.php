@@ -17,7 +17,7 @@ class WorkoutSessionController extends Controller
 
     private $errorMsg = "There was an error processing your request. Please try again...";
     public function view(){
-        $workoutSessions = WorkoutSession::where('user_id', Auth::user()->user_id)->get();
+        $workoutSessions = WorkoutSession::where('user_id', Auth::user()->user_id)->orderBy('date', 'desc')->paginate(15);
 
         return response()->json([
             'workoutSessions' => $workoutSessions
@@ -25,21 +25,27 @@ class WorkoutSessionController extends Controller
     }
 
     public function show($id){
-        $workout_session = WorkoutSession::select('caption', 'comments', 'duration', 'date',
+        try {
+            $workoutSession = WorkoutSession::select('caption', 'comments', 'duration', 'date',
                 DB::raw('JSON_AGG(exercise.name) as exercise_names'),
                 DB::raw('JSON_AGG(workout_set.weight) as exercise_weights'),
                 DB::raw('JSON_AGG(workout_set.repetitions) as repetitions'),
 
             )
-            ->join('workout_set', 'workout_set.session_id', '=', 'workout_session.session_id')
-            ->join('exercise', 'exercise.exercise_id', '=', 'workout_set.exercise_id')
-            ->where('workout_session.session_id', $id)
-            ->where('workout_session.user_id', Auth::user()->user_id)
-            ->groupBy('caption', 'comments', 'duration', 'date')
-            ->get();
-        return response()->json([
-            'workout_session' => $workout_session
-        ]);
+                ->join('workout_set', 'workout_set.session_id', '=', 'workout_session.session_id')
+                ->join('exercise', 'exercise.exercise_id', '=', 'workout_set.exercise_id')
+                ->where('workout_session.session_id', $id)
+                ->where('workout_session.user_id', Auth::user()->user_id)
+                ->groupBy('caption', 'comments', 'duration', 'date')
+                ->firstOrFail();
+            return response()->json([
+                'workoutSession' => $workoutSession
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $this->errorMsg
+            ], 400);
+        }
     }
 
     public function create(Request $request){
