@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import api from "../lib/axios";
 import { useUser } from "../hooks/useUser";
+import handleErrorResponse from "../lib/webErrorMessages";
 
 export const WorkoutSessionContext = createContext();
 export function WorkoutSessionProvider({ children }) {
@@ -22,7 +23,20 @@ export function WorkoutSessionProvider({ children }) {
       const response = await api.get("/showWorkoutSession/" + id);
       setWorkoutSession(response.data.workoutSession);
     } catch (error) {
+      const message = handleErrorResponse(error);
+      throw new Error(message);
+    }
+  }
+
+  async function deleteWorkoutSession(id) {
+    try {
+      const response = await api.delete("/deleteWorkoutSession/" + id);
+      fetchWorkoutSessions();
+      return response.data.success;
+    } catch (error) {
       console.log(error);
+      const message = handleErrorResponse(error);
+      throw new Error(message);
     }
   }
 
@@ -39,9 +53,11 @@ export function WorkoutSessionProvider({ children }) {
     <WorkoutSessionContext.Provider
       value={{
         workoutSessions,
+        setWorkoutSessions,
         workoutSession,
         fetchWorkoutSessions,
         fetchWorkoutSession,
+        deleteWorkoutSession,
       }}
     >
       {children}

@@ -11,11 +11,8 @@ import StatusIndicator from "../../components/StatusIndicator";
 import { useRouter } from "expo-router";
 
 const History = () => {
-  const { workoutSessions } = useWorkoutSessions();
+  const { workoutSessions, setWorkoutSessions } = useWorkoutSessions();
   const safePadding = useSafeAreaInsets();
-  const [workoutSessionsList, setWorkoutSesstionList] = useState(
-    workoutSessions.data,
-  );
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(workoutSessions.last_page);
@@ -30,10 +27,10 @@ const History = () => {
 
       try {
         const response = await api.get(`/viewWorkoutSession?page=${pageNum}`);
-        setWorkoutSesstionList(
+        setWorkoutSessions((prev) =>
           replace
-            ? response.data.workoutSessions.data
-            : [...workoutSessionsList, ...response.data.workoutSessions.data],
+            ? response.data.workoutSessions
+            : [...prev, ...response.data.workoutSessions],
         );
         setLastPage(response.data.workoutSessions.last_page);
         setPage(pageNum);
@@ -41,7 +38,7 @@ const History = () => {
         setIsLoading(false);
       }
     },
-    [isLoading, workoutSessionsList],
+    [isLoading, workoutSessions],
   );
 
   function handleEndReached() {
@@ -51,7 +48,7 @@ const History = () => {
   }
 
   function handleDisplayPage(id) {
-    router.push("/workoutSession/" + id);
+    router.push("/workoutSession/" + id + "/preview");
   }
 
   return (
@@ -59,7 +56,7 @@ const History = () => {
       <FlatList
         keyExtractor={(item) => item.session_id.toString()}
         contentContainerClassName="px-4"
-        data={workoutSessionsList}
+        data={workoutSessions.data}
         onEndReachedThreshold={0.5}
         onEndReached={handleEndReached}
         ListFooterComponent={
