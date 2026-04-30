@@ -8,14 +8,24 @@ import ErrorCard from "../../../../components/GUI/Cards/ErrorCard";
 import { Alert, FlatList, View } from "react-native";
 import { Colors } from "../../../../constants/Colors";
 import PressableButton from "../../../../components/PressableButton";
+import ThemedInput from "../../../../components/ThemedInput";
+import SuccessCard from "../../../../components/GUI/Cards/SuccessCard";
 
 const WorkoutSession = () => {
-  const { workoutSession, fetchWorkoutSession, deleteWorkoutSession } =
-    useWorkoutSessions();
+  const {
+    workoutSession,
+    fetchWorkoutSession,
+    deleteWorkoutSession,
+    updateWorkoutSession,
+  } = useWorkoutSessions();
   const { id } = useLocalSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [webError, setWebError] = useState(null);
   const [webResponse, setWebResponse] = useState(null);
+  const [caption, setCaption] = useState("");
+  const [comments, setComments] = useState("");
+  const [errors, setErrors] = useState(null);
+  const maxChars = 128;
 
   async function fetchRecord() {
     setIsLoading(true);
@@ -32,6 +42,13 @@ const WorkoutSession = () => {
   useEffect(() => {
     fetchRecord();
   }, [id]);
+
+  useEffect(() => {
+    if (workoutSession) {
+      setCaption(workoutSession.caption);
+      setComments(workoutSession.comments);
+    }
+  }, [workoutSession]);
 
   if (webError) {
     return (
@@ -106,73 +123,49 @@ const WorkoutSession = () => {
     }
   }
 
+  function validFields() {
+    let errors = {};
+    if (!caption) {
+      errors.caption = "Caption can't be empty.";
+    } else if (caption.length > maxChars) {
+      errors.caption = "Caption length is limted to 128 symbols.";
+    }
+    if (comments.length > maxChars) {
+      errors.comments = "Comments length is limited to 128 symbols.";
+    }
+    setErrors(errors);
+
+    return Object.keys(errors).length === 0;
+  }
+
+  async function updateRecord() {
+    setIsLoading(true);
+    setWebError(null);
+    setWebResponse(null);
+    setErrors(null);
+    try {
+      if (validFields()) {
+        const response = await updateWorkoutSession(id, caption, comments);
+        setWebResponse(response);
+        workoutSession.caption = caption;
+        workoutSession.comments = comments;
+      }
+    } catch (error) {
+      setWebError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <ThemedView safe>
-      <View>
-        <View
-          style={{ backgroundColor: Colors.surface }}
-          className="h-36 px-8 border-1 border-b border-gray-300"
-        >
-          <View className="flex-row justify-between items-center py-4">
-            <ThemedText bold numberOfLines={1} className="text-xl">
-              {workoutSession.caption}
-            </ThemedText>
-            <PressableButton
-              onPress={handleDelete}
-              className="h-10 w-20 bg-red-400"
-            >
-              <ThemedText style={{ color: Colors.surface }} bold>
-                Delete
-              </ThemedText>
-            </PressableButton>
-          </View>
-          <View className="flex-row gap-4 items-center">
-            <ThemedText bold theme className="text-4xl">
-              {workoutSession.duration}
-            </ThemedText>
-            <View>
-              <ThemedText bold className="text-2xl">
-                {totalExercises}
-              </ThemedText>
-              <ThemedText>EXER</ThemedText>
-            </View>
-            <View>
-              <ThemedText bold className="text-2xl">
-                {totalSets}
-              </ThemedText>
-              <ThemedText>SETS</ThemedText>
-            </View>
-            <View>
-              <ThemedText bold className="text-2xl">
-                {totalKG}
-              </ThemedText>
-              <ThemedText>KG VOL</ThemedText>
-            </View>
-            <View>
-              <ThemedText bold className="text-2xl">
-                {totalReps}
-              </ThemedText>
-              <ThemedText>REPS</ThemedText>
-            </View>
-          </View>
-        </View>
-        {workoutSession.comments !== "null" ? (
-          <View
-            style={{ backgroundColor: Colors.surface }}
-            className="h-36 px-8 py-4"
-          >
-            <ThemedText>{workoutSession.comments}</ThemedText>
-          </View>
-        ) : null}
-      </View>
-
       <FlatList
-        className="px-4"
+        stickyHeaderIndices={[0]}
         data={zippedExercises}
         renderItem={({ item }) => (
           <View
             style={{ backgroundColor: Colors.surface }}
-            className="h-24 mt-4 p-4 border-1 border-gray-300 items-center flex-row"
+            className="h-24 mx-4 mt-4 p-4 border-1 border-gray-300 items-center flex-row"
           >
             <View className="flex-2">
               <ThemedText bold className="text-2xl">
@@ -192,28 +185,118 @@ const WorkoutSession = () => {
           </View>
         )}
         ListHeaderComponent={
-          <View
-            style={{ backgroundColor: Colors.surface }}
-            className="h-26 mt-4 p-4 border-1 border-gray-300 items-center flex-row"
-          >
-            <View className="flex-2">
-              <ThemedText bold className="text-xl">
-                Exercise Name
-              </ThemedText>
+          <View>
+            {webResponse ? (
+              <SuccessCard message={webResponse}></SuccessCard>
+            ) : null}
+            {Object.keys(errors).length !== 0 ? (
+              <ErrorCard error={errors}></ErrorCard>
+            ) : null}
+            <View>
+              <View
+                style={{ backgroundColor: Colors.surface }}
+                className="h-40 px-8 border-1 border-b border-gray-300"
+              >
+                <View className="flex-row justify-between gap-8 items-center py-4">
+                  <ThemedInput
+                    onChangeText={setCaption}
+                    maxLength={maxChars}
+                    className="flex-1 h-14 font-bold text-xl rounded-xl focus:border-amber-500 border border-gray-300"
+                  >
+                    {caption}
+                  </ThemedInput>
+                  <View className="flex-row gap-3">
+                    <PressableButton
+                      onPress={handleDelete}
+                      className="h-10 w-20 bg-red-400"
+                    >
+                      <ThemedText style={{ color: Colors.surface }} bold>
+                        Delete
+                      </ThemedText>
+                    </PressableButton>
+                    {caption !== workoutSession.caption ||
+                    comments !== workoutSession.comments ? (
+                      <PressableButton
+                        onPress={updateRecord}
+                        className="h-10 w-20 bg-green-400"
+                      >
+                        <ThemedText style={{ color: Colors.surface }} bold>
+                          Update
+                        </ThemedText>
+                      </PressableButton>
+                    ) : null}
+                  </View>
+                </View>
+                <View className="flex-row gap-4 items-center">
+                  <ThemedText bold theme className="text-4xl">
+                    {workoutSession.duration}
+                  </ThemedText>
+                  <View>
+                    <ThemedText bold className="text-2xl">
+                      {totalExercises}
+                    </ThemedText>
+                    <ThemedText>EXER</ThemedText>
+                  </View>
+                  <View>
+                    <ThemedText bold className="text-2xl">
+                      {totalSets}
+                    </ThemedText>
+                    <ThemedText>SETS</ThemedText>
+                  </View>
+                  <View>
+                    <ThemedText bold className="text-2xl">
+                      {totalKG}
+                    </ThemedText>
+                    <ThemedText>KG VOL</ThemedText>
+                  </View>
+                  <View>
+                    <ThemedText bold className="text-2xl">
+                      {totalReps}
+                    </ThemedText>
+                    <ThemedText>REPS</ThemedText>
+                  </View>
+                </View>
+              </View>
+
+              <View
+                style={{ backgroundColor: Colors.surface }}
+                className="h-36 px-8 py-4 border-1 border-b border-gray-300"
+              >
+                <ThemedText bold>Comments</ThemedText>
+                <ThemedInput
+                  onChangeText={setComments}
+                  maxLength={maxChars}
+                  multiline={true}
+                  textAlignVertical="top"
+                  className="flex-1 rounded-xl focus:border-amber-500 border border-gray-300"
+                >
+                  {comments}
+                </ThemedInput>
+              </View>
             </View>
-            <View className="flex-1 items-center">
-              <ThemedText bold className="text-xl">
-                KG
-              </ThemedText>
-            </View>
-            <View className="flex-1 items-end">
-              <ThemedText bold className="text-xl">
-                Reps
-              </ThemedText>
+
+            <View
+              style={{ backgroundColor: Colors.surface }}
+              className="h-24 px-8 p-4 border-1 border-gray-300 items-center flex-row"
+            >
+              <View className="flex-2">
+                <ThemedText bold className="text-xl">
+                  Exercise Name
+                </ThemedText>
+              </View>
+              <View className="flex-1 items-center">
+                <ThemedText bold className="text-xl">
+                  KG
+                </ThemedText>
+              </View>
+              <View className="flex-1 items-end">
+                <ThemedText bold className="text-xl">
+                  Reps
+                </ThemedText>
+              </View>
             </View>
           </View>
         }
-        ListFooterComponent={<View className="mb-4 h-8"></View>}
       ></FlatList>
     </ThemedView>
   );

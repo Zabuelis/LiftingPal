@@ -21,8 +21,26 @@ export function WorkoutSessionProvider({ children }) {
   async function fetchWorkoutSession(id) {
     try {
       const response = await api.get("/showWorkoutSession/" + id);
+      if (response.data.workoutSession.comments === "null") {
+        response.data.workoutSession.comments = "";
+      }
       setWorkoutSession(response.data.workoutSession);
     } catch (error) {
+      const message = handleErrorResponse(error);
+      throw new Error(message);
+    }
+  }
+
+  async function updateWorkoutSession(id, caption, comments) {
+    try {
+      const response = await api.put("/updateWorkoutSession/" + id, {
+        caption,
+        comments,
+      });
+      await fetchWorkoutSessions();
+      return response.data.success;
+    } catch (error) {
+      console.log(error);
       const message = handleErrorResponse(error);
       throw new Error(message);
     }
@@ -58,6 +76,7 @@ export function WorkoutSessionProvider({ children }) {
         fetchWorkoutSessions,
         fetchWorkoutSession,
         deleteWorkoutSession,
+        updateWorkoutSession,
       }}
     >
       {children}
