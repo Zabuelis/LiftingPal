@@ -24,7 +24,7 @@ const WorkoutSessionCard = ({ ...props }) => {
             <View className="mx-2 w-12 h-12 items-center justify-center bg-gray-200 rounded-[3vw]">
               <Ionicons name="barbell" size={24} />
             </View>
-            <View>
+            <View className="flex-1">
               <ThemedText bold className="text-start text-lg" numberOfLines={1}>
                 {props.session.caption}
               </ThemedText>

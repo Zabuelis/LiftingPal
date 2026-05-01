@@ -24,7 +24,7 @@ const WorkoutSession = () => {
   const [webResponse, setWebResponse] = useState(null);
   const [caption, setCaption] = useState("");
   const [comments, setComments] = useState("");
-  const [errors, setErrors] = useState(null);
+  const [errors, setErrors] = useState({});
   const maxChars = 128;
 
   async function fetchRecord() {
@@ -112,9 +112,15 @@ const WorkoutSession = () => {
     );
   }
 
+  function clearFields() {
+    setWebError(null);
+    setWebResponse(null);
+    setErrors({});
+  }
+
   async function deleteRecord() {
     setIsLoading(true);
-    setWebError(null);
+    clearFields();
     try {
       const response = await deleteWorkoutSession(id);
       router.navigate("/history");
@@ -140,9 +146,7 @@ const WorkoutSession = () => {
 
   async function updateRecord() {
     setIsLoading(true);
-    setWebError(null);
-    setWebResponse(null);
-    setErrors(null);
+    clearFields();
     try {
       if (validFields()) {
         const response = await updateWorkoutSession(id, caption, comments);
@@ -190,7 +194,13 @@ const WorkoutSession = () => {
               <SuccessCard message={webResponse}></SuccessCard>
             ) : null}
             {Object.keys(errors).length !== 0 ? (
-              <ErrorCard error={errors}></ErrorCard>
+              <View className="bg-red-400 min-h-16 border-red-800 border-2 items-center justify-center">
+                {Object.keys(errors).map((key) => (
+                  <ThemedText key={key} bold>
+                    {errors[key]}
+                  </ThemedText>
+                ))}
+              </View>
             ) : null}
             <View>
               <View
