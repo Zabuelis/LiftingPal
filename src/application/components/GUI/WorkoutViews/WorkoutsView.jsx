@@ -54,6 +54,10 @@ const WorkoutsView = () => {
     });
   }
 
+  function handleStart(id) {
+    router.push("/workoutSession/" + id + "/create");
+  }
+
   return (
     <ScrollablePage ref={pageTop} safeView={false}>
       {webMessage ? <SuccessCard message={webMessage}></SuccessCard> : null}
@@ -90,6 +94,7 @@ const WorkoutsView = () => {
               key={index}
               delete={removeWorkout}
               edit={handleEdit}
+              start={handleStart}
             ></WorkoutCard>
           ))
         ) : (

@@ -31,6 +31,10 @@ const WorkoutCard = ({ object, style, ...props }) => {
     props.edit(id);
   }
 
+  function handleStart() {
+    props.start(id);
+  }
+
   return (
     <View
       style={{ backgroundColor: Colors.surface }}
@@ -89,7 +93,10 @@ const WorkoutCard = ({ object, style, ...props }) => {
       ) : null}
       {object.exercise_names ? (
         <View className="items-end mt-auto pb-2 pr-2">
-          <PressableButton className="flex-row w-1/3 justify-center py-2 px-4">
+          <PressableButton
+            onPress={handleStart}
+            className="flex-row w-1/3 justify-center py-2 px-4"
+          >
             <Ionicons
               style={{ color: Colors.surface }}
               name="play-outline"

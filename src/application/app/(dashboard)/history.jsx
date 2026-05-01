@@ -5,14 +5,13 @@ import { FlatList, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "../../constants/Colors";
 import ThemedView from "../../components/ThemedView";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import api from "../../lib/axios";
 import StatusIndicator from "../../components/StatusIndicator";
 import { useRouter } from "expo-router";
 
 const History = () => {
   const { workoutSessions, setWorkoutSessions } = useWorkoutSessions();
-  const safePadding = useSafeAreaInsets();
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(workoutSessions.last_page);
@@ -27,18 +26,24 @@ const History = () => {
 
       try {
         const response = await api.get(`/viewWorkoutSession?page=${pageNum}`);
-        setWorkoutSessions((prev) =>
-          replace
-            ? response.data.workoutSessions
-            : [...prev, ...response.data.workoutSessions],
-        );
+        if (replace) {
+          setWorkoutSessions(response.data.workoutSessions);
+        } else {
+          setWorkoutSessions((workoutSessions) => ({
+            ...workoutSessions,
+            data: [
+              ...workoutSessions.data,
+              ...response.data.workoutSessions.data,
+            ],
+          }));
+        }
         setLastPage(response.data.workoutSessions.last_page);
         setPage(pageNum);
       } finally {
         setIsLoading(false);
       }
     },
-    [isLoading, workoutSessions],
+    [isLoading, workoutSessions.data],
   );
 
   function handleEndReached() {
