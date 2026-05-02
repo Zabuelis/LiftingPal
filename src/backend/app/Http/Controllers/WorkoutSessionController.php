@@ -64,7 +64,7 @@ class WorkoutSessionController extends Controller
         ]);
         // Validate if workout belongs to the user
         $userID = Auth::user()->user_id;
-        if(Workout::where('workout_id', $validated)->where('user_id', $userID)->doesntExist()){
+        if(Workout::where('workout_id', $validated['workout_id'])->where('user_id', $userID)->doesntExist()){
             return response()->json([
                 'error' => $this->errorMsg
             ], 400);

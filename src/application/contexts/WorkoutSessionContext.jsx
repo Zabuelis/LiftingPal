@@ -52,7 +52,33 @@ export function WorkoutSessionProvider({ children }) {
       fetchWorkoutSessions();
       return response.data.success;
     } catch (error) {
-      console.log(error);
+      const message = handleErrorResponse(error);
+      throw new Error(message);
+    }
+  }
+
+  async function createWorkoutSession(
+    workout_id,
+    date,
+    duration,
+    comments,
+    caption,
+    sets,
+  ) {
+    const payload = {
+      workout_id,
+      date,
+      duration,
+      comments,
+      caption,
+      set: sets,
+    };
+    console.log(payload);
+    try {
+      const response = await api.post("/createWorkoutSession", payload);
+      fetchWorkoutSessions();
+      return response.data.success;
+    } catch (error) {
       const message = handleErrorResponse(error);
       throw new Error(message);
     }
@@ -77,6 +103,7 @@ export function WorkoutSessionProvider({ children }) {
         fetchWorkoutSession,
         deleteWorkoutSession,
         updateWorkoutSession,
+        createWorkoutSession,
       }}
     >
       {children}
