@@ -14,7 +14,8 @@ export function WorkoutSessionProvider({ children }) {
       const response = await api.get("/viewWorkoutSession");
       setWorkoutSessions(response.data.workoutSessions);
     } catch (error) {
-      console.log(error);
+      const message = handleErrorResponse(error);
+      throw new Error(message);
     }
   }
 
@@ -40,7 +41,6 @@ export function WorkoutSessionProvider({ children }) {
       await fetchWorkoutSessions();
       return response.data.success;
     } catch (error) {
-      console.log(error);
       const message = handleErrorResponse(error);
       throw new Error(message);
     }
@@ -73,7 +73,6 @@ export function WorkoutSessionProvider({ children }) {
       caption,
       set: sets,
     };
-    console.log(payload);
     try {
       const response = await api.post("/createWorkoutSession", payload);
       fetchWorkoutSessions();

@@ -2,10 +2,8 @@ import ThemedText from "../../components/ThemedText";
 import { useWorkoutSessions } from "../../hooks/useWorkoutSessions";
 import WorkoutSessionCard from "../../components/GUI/Cards/WorkoutSessionCard";
 import { FlatList, Pressable, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Colors } from "../../constants/Colors";
 import ThemedView from "../../components/ThemedView";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import api from "../../lib/axios";
 import StatusIndicator from "../../components/StatusIndicator";
 import { useRouter } from "expo-router";
@@ -47,7 +45,7 @@ const History = () => {
   );
 
   function handleEndReached() {
-    if (page < lastPage) {
+    if (page < lastPage && !isLoading) {
       loadSessions(page + 1);
     }
   }
@@ -77,7 +75,10 @@ const History = () => {
           ) : null
         }
         renderItem={({ item }) => (
-          <Pressable onPress={() => handleDisplayPage(item.session_id)}>
+          <Pressable
+            key={item.session_id}
+            onPress={() => handleDisplayPage(item.session_id)}
+          >
             <WorkoutSessionCard session={item}></WorkoutSessionCard>
           </Pressable>
         )}
