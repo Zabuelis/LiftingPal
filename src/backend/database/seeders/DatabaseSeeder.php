@@ -26,5 +26,15 @@ class DatabaseSeeder extends Seeder
             'is_admin' => 'true',
         ]);
 
+        $i = 0;
+        while($i < 50){
+           User::factory()->create([
+                'name' => 'Some Ordinary User',
+                'email' => fake()->unique()->safeEmail(),
+                'password' => Hash::make('1234'),
+            ]); 
+            $i++;
+        }
+
     }
 }
