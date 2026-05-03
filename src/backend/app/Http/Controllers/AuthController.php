@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -65,5 +66,37 @@ class AuthController extends Controller
         return response([
             'success' => 'You have logged out.'
         ]);
+    }
+
+    public function loginAdmin(Request $request){
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        $user = User::where('email', $validated['email'])->first();
+
+        if(!$user || !Hash::check($validated['password'], $user->password)){
+            return redirect()->back()->with('error', 'Incorrect credentials.');
+        }
+
+        if(Auth::attempt($validated)){
+            if(!$user->is_admin){
+                Auth::logout();
+                return redirect()->back()->with('error', 'This is dedicated for admin users. For full experience use the application.');
+            }
+            $request->session()->regenerate();
+            return redirect()->route('admin');
+        }
+        return redirect()->back()->with('error', 'Incorrect credentials.');
+    }
+
+    public function logoutAdmin(Request $request){
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
     }
 }
