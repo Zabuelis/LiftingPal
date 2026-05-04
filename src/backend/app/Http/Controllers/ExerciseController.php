@@ -97,11 +97,8 @@ class ExerciseController extends Controller
     }
 
     public function showPublic(){
-        $userId = Auth::user()->user_id;
-
         try {
-            $exercises = Exercise::where('is_public', true)
-            ->whereNotIn('exercise_id', Exercise::where('user_id', $userId)->select('exercise_id'))->get();
+            $exercises = Exercise::where('is_public', true)->get();
             return response()->json([
                 'exercises' => $exercises,
             ]);
