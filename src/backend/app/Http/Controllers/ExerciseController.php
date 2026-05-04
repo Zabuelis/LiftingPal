@@ -95,4 +95,46 @@ class ExerciseController extends Controller
             ], 400);
         }
     }
+
+    public function showPublic(){
+        $userId = Auth::user()->user_id;
+
+        try {
+            $exercises = Exercise::where('is_public', true)->whereNotIn('exercise_id', function($query) use ($userId)
+                {
+                    $query->select('exercise_id')->from('exercise')->where('user_id', $userId);
+                }
+            );
+            return response()->json([
+                'exercises' => $exercises,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch exercises.'
+            ], 400);
+
+        }
+    }
+
+    public function addPublicExercise(Request $request, $id){
+        $exercise = Exercise::where('exercise_id', $id)->first();
+
+        try {
+            $userId = Auth::user()->user_id;
+            Exercise::insert([
+                'user_id' => $userId,
+                'name' => $exercise->name,
+                'description' => $exercise->description,
+            ]);
+            return response()->json([
+                'success' => 'Exercise added successfully.'
+            ]);
+
+        }   catch (Exception $e) {
+            return response()->json([
+                'error' => 'Failed to add exercise.'
+            ], 400);
+        }
+
+    }
 }

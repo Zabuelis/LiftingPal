@@ -26,6 +26,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/createExercise', 'create');
         Route::delete('/deleteExercise/{id}', 'delete');
         Route::put('/updateExercise/{id}', 'update');
+        Route::get('/viewPublicExercise', 'showPublic');
+        Route::post('/addPublicExercise/{id}', 'addPublicExercise');
     });
 
     // Workout related routes

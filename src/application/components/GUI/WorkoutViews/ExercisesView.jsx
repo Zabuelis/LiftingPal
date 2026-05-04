@@ -44,6 +44,12 @@ const ExercisesView = () => {
     });
   }
 
+  function handlePublic() {
+    router.replace({
+      pathname: "/forms/publicExercises",
+    });
+  }
+
   const filteredExercises = filterList(exercises, filter);
 
   return (
@@ -54,11 +60,16 @@ const ExercisesView = () => {
         <ThemedText bold className="text-3xl">
           MY EXERCISES
         </ThemedText>
-        <PressableButton onPress={handleCreate} className="w-14 h-14">
-          <ThemedText style={{ color: Colors.surface }} className="text-4xl">
-            +
-          </ThemedText>
-        </PressableButton>
+        <View className="flex-row items-center gap-4 justify-between">
+          <PressableButton onPress={handlePublic} className="w-24 h-14">
+            <ThemedText style={{ color: Colors.surface }}>+ PUBLIC</ThemedText>
+          </PressableButton>
+          <PressableButton onPress={handleCreate} className="w-14 h-14">
+            <ThemedText style={{ color: Colors.surface }} className="text-4xl">
+              +
+            </ThemedText>
+          </PressableButton>
+        </View>
       </View>
 
       <View className="px-6">
