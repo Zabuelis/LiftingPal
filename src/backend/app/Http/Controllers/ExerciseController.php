@@ -100,11 +100,8 @@ class ExerciseController extends Controller
         $userId = Auth::user()->user_id;
 
         try {
-            $exercises = Exercise::where('is_public', true)->whereNotIn('exercise_id', function($query) use ($userId)
-                {
-                    $query->select('exercise_id')->from('exercise')->where('user_id', $userId);
-                }
-            );
+            $exercises = Exercise::where('is_public', true)
+            ->whereNotIn('exercise_id', Exercise::where('user_id', $userId)->select('exercise_id'))->get();
             return response()->json([
                 'exercises' => $exercises,
             ]);
@@ -117,14 +114,14 @@ class ExerciseController extends Controller
     }
 
     public function addPublicExercise(Request $request, $id){
-        $exercise = Exercise::where('exercise_id', $id)->first();
-
         try {
+            $exercise = Exercise::where('exercise_id', $id)->where('is_public', true)->firstOrFail();
             $userId = Auth::user()->user_id;
             Exercise::insert([
                 'user_id' => $userId,
                 'name' => $exercise->name,
                 'description' => $exercise->description,
+                'is_public' => false,
             ]);
             return response()->json([
                 'success' => 'Exercise added successfully.'
