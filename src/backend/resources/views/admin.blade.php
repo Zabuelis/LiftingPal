@@ -62,7 +62,11 @@
                         <form action="/admin/user/{{ $user->user_id }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="w-16 h-8 text-red-800 bg-red-400 border border-red-600">Delete</button>
+                            <button type="submit" 
+                            onclick="return confirm('Are you sure you want to delete this user?')"
+                            class="w-16 h-8 text-red-800 bg-red-400 border border-red-600">
+                                Delete
+                            </button>
                         </form>
                     </th>
                 </tr>
@@ -83,7 +87,7 @@
                     <button type="submit">Search</button>
                 </form>
             </div>
-            <div class="flex justify-center items-center">
+            <div class="flex justify-center items-center mt-8 mb-4">
                 <a href="/admin/exercise/create">Create exercise -></a>
             </div>
         </div>
@@ -104,7 +108,11 @@
                         <form action="/admin/exercise/{{ $exercise->exercise_id }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="w-16 h-8 text-red-800 bg-red-400 border border-red-600">Delete</button>
+                            <button type="submit" 
+                            onclick="return confirm('Are you sure you want to delete this exercise?')"
+                            class="w-16 h-8 text-red-800 bg-red-400 border border-red-600">
+                                Delete
+                            </button>
                         </form>
                     </th>
                 </tr>
