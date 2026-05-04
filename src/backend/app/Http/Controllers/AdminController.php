@@ -18,9 +18,12 @@ class AdminController extends Controller
 
     public function searchUser(Request $request){
         $exercises = Exercise::where('is_public', true)->orderBy('exercise_id', 'asc')->paginate(10);
-        $users = User::where('user_id', 'like', '%'.$request['query'].'%')
-        ->orWhere('name', 'like', '%'.$request['query'].'%')
-        ->orWhere('email', 'like', '%'.$request['query'].'%')
+        $users = User::where('is_admin', false)
+        ->where(function($q) use($request){
+            $q->where('user_id', 'like', '%'.$request['query'].'%')
+            ->orWhere('name', 'like', '%'.$request['query'].'%')
+            ->orWhere('email', 'like', '%'.$request['query'].'%');
+        })
         ->orderBy('user_id', 'asc')
         ->paginate(10);
 
