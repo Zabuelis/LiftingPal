@@ -65,8 +65,13 @@ const WorkoutSession = () => {
   }
 
   function computeTotalExercises() {
-    const unique = (arr) => [...new Set(workoutSession.exercise_names)];
-    return unique.length;
+    const uniqueExercises = [];
+    workoutSession.exercise_names.map((exercise) => {
+      if (uniqueExercises.indexOf(exercise) === -1) {
+        uniqueExercises.push(exercise);
+      }
+    });
+    return uniqueExercises.length;
   }
 
   function computeTotalVolume() {
@@ -169,20 +174,20 @@ const WorkoutSession = () => {
         renderItem={({ item }) => (
           <View
             style={{ backgroundColor: Colors.surface }}
-            className="h-24 mx-4 mt-4 p-4 border-1 border-gray-300 items-center flex-row"
+            className="h-24 mx-4 mt-4 p-4 border-1 border-gray-300 items-center justify-between flex-row"
           >
-            <View className="flex-2">
-              <ThemedText bold className="text-2xl">
+            <View className="flex-1 items-start">
+              <ThemedText bold numberOfLines={3} className="text-lg">
                 {item.exercise_name}
               </ThemedText>
             </View>
             <View className="flex-1 items-center">
-              <ThemedText bold className="text-2xl">
+              <ThemedText bold numberOfLines={3} className="text-lg">
                 {item.exercise_weight}
               </ThemedText>
             </View>
             <View className="flex-1 items-end">
-              <ThemedText bold className="text-2xl">
+              <ThemedText bold numberOfLines={3} className="text-lg">
                 {item.repetition}
               </ThemedText>
             </View>
