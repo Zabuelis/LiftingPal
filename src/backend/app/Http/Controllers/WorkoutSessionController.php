@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workout;
@@ -10,6 +9,7 @@ use App\Models\Exercise;
 use App\Models\WorkoutSession;
 use App\Models\WorkoutSet;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use Exception;
 
 class WorkoutSessionController extends Controller
@@ -147,5 +147,19 @@ class WorkoutSessionController extends Controller
         return response()->json([
             'success' => 'Workout session removed successfully.'
         ]);
+    }
+
+    public function viewActivity(){
+        $date = Carbon::today()->subDays(30);
+        try {
+            $activity = WorkoutSession::select('date', DB::raw('count(*) as count'))->where('user_id', Auth::user()->user_id)->where('date', '>=', $date)->groupBy('date')->get();
+            return response()->json([
+                'activity' => $activity
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch user activity. Please try again...'
+            ], 400);
+        }
     }
 }
