@@ -4,11 +4,16 @@ import { useUser } from "../../hooks/useUser";
 import ThemedText from "../../components/ThemedText";
 import ScrollablePage from "../../components/ScrollablePage";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Link } from "expo-router";
+import { Link, useFocusEffect } from "expo-router";
 import PressableButton from "../../components/PressableButton";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import StatusIndicator from "../../components/StatusIndicator";
 import ErrorCard from "../../components/GUI/Cards/ErrorCard";
+import { ContributionGraph } from "react-native-chart-kit";
+import api from "../../lib/axios";
+import handleErrorResponse from "../../lib/webErrorMessages";
+import { ChartConfig } from "../../constants/ChartConfig";
+import ThemedView from "../../components/ThemedView";
 
 const Profile = () => {
   const { user, logout } = useUser();
@@ -16,6 +21,7 @@ const Profile = () => {
   const createdAtYear = date.getFullYear();
   const [webMessageError, setWebMessageError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [activity, setActivity] = useState([]);
 
   async function handleLogout() {
     setWebMessageError(null);
@@ -27,6 +33,33 @@ const Profile = () => {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  async function getActivity() {
+    setWebMessageError(null);
+    setIsLoading(true);
+    try {
+      const response = await api.get("/viewActivity");
+      setActivity(response.data.activity);
+    } catch (error) {
+      setWebMessageError(handleErrorResponse(error));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      getActivity();
+    }, []),
+  );
+
+  if (isLoading) {
+    return (
+      <ThemedView className="flex-1">
+        <StatusIndicator isLoading={true}></StatusIndicator>
+      </ThemedView>
+    );
   }
 
   return (
@@ -134,6 +167,23 @@ const Profile = () => {
             >
               <ThemedText></ThemedText>
             </View>
+          </View>
+          <View className="pt-4">
+            <ThemedText bold className="text-xl">
+              User Activity
+            </ThemedText>
+            {activity && activity.length > 0 ? (
+              <View className="flex items-center">
+                <ContributionGraph
+                  values={activity}
+                  endDate={new Date()}
+                  numDays={90}
+                  chartConfig={ChartConfig}
+                  width={380}
+                  height={220}
+                />
+              </View>
+            ) : null}
           </View>
           <View className="py-8">
             <PressableButton onPress={handleLogout} className="w-full h-20">
