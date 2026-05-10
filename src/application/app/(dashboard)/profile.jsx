@@ -21,7 +21,6 @@ const Profile = () => {
   const createdAtYear = date.getFullYear();
   const [webMessageError, setWebMessageError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [activity, setActivity] = useState([]);
 
   async function handleLogout() {
     setWebMessageError(null);
@@ -34,25 +33,6 @@ const Profile = () => {
       setIsLoading(false);
     }
   }
-
-  async function getActivity() {
-    setWebMessageError(null);
-    setIsLoading(true);
-    try {
-      const response = await api.get("/viewActivity");
-      setActivity(response.data.activity);
-    } catch (error) {
-      setWebMessageError(handleErrorResponse(error));
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useFocusEffect(
-    useCallback(() => {
-      getActivity();
-    }, []),
-  );
 
   if (isLoading) {
     return (
@@ -167,23 +147,6 @@ const Profile = () => {
             >
               <ThemedText></ThemedText>
             </View>
-          </View>
-          <View className="pt-4">
-            <ThemedText bold className="text-xl">
-              User Activity
-            </ThemedText>
-            {activity && activity.length > 0 ? (
-              <View className="flex items-center">
-                <ContributionGraph
-                  values={activity}
-                  endDate={new Date()}
-                  numDays={90}
-                  chartConfig={ChartConfig}
-                  width={380}
-                  height={220}
-                />
-              </View>
-            ) : null}
           </View>
           <View className="py-8">
             <PressableButton onPress={handleLogout} className="w-full h-20">

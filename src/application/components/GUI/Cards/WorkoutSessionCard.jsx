@@ -4,15 +4,10 @@ import ThemedText from "../../ThemedText";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 const WorkoutSessionCard = ({ ...props }) => {
-  const pluckedDate = props.session.date.substring(
-    0,
-    props.session.date.indexOf(" "),
-  );
-
   return (
     <View className="my-4">
       <View className="flex-row items-center px-2 gap-2">
-        <ThemedText>{pluckedDate}</ThemedText>
+        <ThemedText>{props.session.date}</ThemedText>
         <View className="flex-1 h-px bg-gray-500"></View>
       </View>
       <View
