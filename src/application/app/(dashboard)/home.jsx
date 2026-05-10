@@ -159,7 +159,8 @@ const Home = () => {
             </View>
             <View
               style={{ backgroundColor: Colors.accentTheme }}
-              className="flex-row border rounded-xl border-gray-300 items-center justify-center mt-6 mx-14"
+              width={300}
+              className="flex-row border rounded-xl border-gray-300 items-center justify-center mt-3 pb-2 mx-12"
             >
               <View className="flex justify-end items-end w-16">
                 <ThemedText
@@ -177,13 +178,13 @@ const Home = () => {
                 yAxisColor="transparent"
                 showValuesAsTopLabel
                 data={weekTime}
-                width={200}
+                width={210}
                 barWidth={60}
                 spacing={40}
                 frontColor={Colors.theme}
                 hideRules
                 xAxisColor={Colors.theme}
-                xAxisLabelTextStyle={{ color: Colors.theme, fontSize: 10 }}
+                xAxisLabelTextStyle={{ color: Colors.theme, fontSize: 14 }}
               />
             </View>
           </View>
