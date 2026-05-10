@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/getUserData', 'show');
         Route::put('/updateBodyStats', 'updateBodyStats');
         Route::get('/getUserTotals', 'userTotals');
+        Route::get('/getWeekTime', 'weekTimeDifference');
     });
 
     // Exercise related routes
