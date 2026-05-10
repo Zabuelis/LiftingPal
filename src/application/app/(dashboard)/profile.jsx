@@ -6,7 +6,7 @@ import ScrollablePage from "../../components/ScrollablePage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link, useFocusEffect } from "expo-router";
 import PressableButton from "../../components/PressableButton";
-import { useCallback, useState } from "react";
+import { useEffect, useState } from "react";
 import StatusIndicator from "../../components/StatusIndicator";
 import ErrorCard from "../../components/GUI/Cards/ErrorCard";
 import { ContributionGraph } from "react-native-chart-kit";
@@ -21,6 +21,7 @@ const Profile = () => {
   const createdAtYear = date.getFullYear();
   const [webMessageError, setWebMessageError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [bmi, setBmi] = useState(0);
 
   async function handleLogout() {
     setWebMessageError(null);
@@ -33,6 +34,20 @@ const Profile = () => {
       setIsLoading(false);
     }
   }
+
+  function computeBMI() {
+    if (user.height && user.weight && user.height > 0 && user.weight > 0) {
+      let normalizedHeight = (user.height / 100).toFixed(1);
+      let bmi = (user.weight / (normalizedHeight * normalizedHeight)).toFixed(
+        1,
+      );
+      setBmi(bmi);
+    }
+  }
+
+  useEffect(() => {
+    computeBMI();
+  }, [user.weight, user.height]);
 
   if (isLoading) {
     return (
@@ -52,16 +67,9 @@ const Profile = () => {
         <ThemedText style={{ color: Colors.surface }} bold className="text-3xl">
           {user.name.toUpperCase()}
         </ThemedText>
-        <ThemedText
-          bold
-          style={{ color: Colors.surface }}
-          className="opacity-70"
-        >
-          MEMBER SINCE {createdAtYear}
-        </ThemedText>
         <View className="p-2 bg-amber-500/30 rounded-2xl">
           <ThemedText bold style={{ color: Colors.surface }}>
-            14 DAY STREAK
+            MEMBER SINCE {createdAtYear}
           </ThemedText>
         </View>
       </View>
@@ -123,7 +131,7 @@ const Profile = () => {
               </View>
             </View>
           </View>
-          <View className="mt-4 flex-1 flex-row gap-2 h-20">
+          <View className="mt-4 flex-1 h-20">
             <View
               style={{ backgroundColor: Colors.surface }}
               className="flex-1 items-center justify-center gap-1 rounded-3xl border border-gray-300"
@@ -138,14 +146,11 @@ const Profile = () => {
                 </View>
                 <View>
                   <ThemedText className="opacity-60">BMI</ThemedText>
+                  <ThemedText bold className="text-xl">
+                    {bmi}
+                  </ThemedText>
                 </View>
               </View>
-            </View>
-            <View
-              style={{ backgroundColor: Colors.surface }}
-              className="flex-1 items-center justify-center gap-1 rounded-3xl border border-gray-300"
-            >
-              <ThemedText></ThemedText>
             </View>
           </View>
           <View className="py-8">
