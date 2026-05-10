@@ -62,8 +62,15 @@ class UserController extends Controller
     public function userTotals(Request $request) {
         try {
             $total_workouts = WorkoutSession::where('user_id', Auth::user()->user_id)->count();
-            $total_sets =  WorkoutSet::join('workout_session', 'workout_session.session_id', '=', 'workout_set.session_id')->where('user_id', Auth::user()->user_id)->count();
-            $total_time = WorkoutSession::select(DB::raw('sum(extract (epoch from duration)) as total_time'))->where('user_id', Auth::user()->user_id)->pluck('total_time')->first();
+
+            $total_sets =  WorkoutSet::join('workout_session', 'workout_session.session_id', '=', 'workout_set.session_id')
+            ->where('user_id', Auth::user()->user_id)
+            ->count();
+
+            $total_time = WorkoutSession::select(DB::raw('sum(extract (epoch from duration)) as total_time'))
+            ->where('user_id', Auth::user()->user_id)
+            ->pluck('total_time')
+            ->first();
             $total_hours = number_format($total_time / 3600, 1);
             return response()->json([
                 'total_workouts' => $total_workouts,
@@ -73,6 +80,23 @@ class UserController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'Failed to fetch user totals.'
+            ], 403);
+        }
+    }
+
+    public function weekTimeDifference(){
+        try {
+            $week_time = WorkoutSession::select(DB::raw("date_trunc('week', date) as week, sum(extract(epoch from duration)) as time"))
+            ->whereRaw("date >= date_trunc('week', NOW() - INTERVAL '1 week')")
+            ->groupBy('week')
+            ->orderBy('week', 'asc')
+            ->get();
+            return response()->json([
+                'week_time' => $week_time
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch week time difference.'
             ], 403);
         }
     }
