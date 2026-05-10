@@ -1,8 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\WorkoutSession;
+use App\Models\WorkoutSet;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 use Illuminate\Http\Request;
 
@@ -52,6 +57,24 @@ class UserController extends Controller
             ], 403);
         }
 
+    }
+
+    public function userTotals(Request $request) {
+        try {
+            $total_workouts = WorkoutSession::where('user_id', Auth::user()->user_id)->count();
+            $total_sets =  WorkoutSet::join('workout_session', 'workout_session.session_id', '=', 'workout_set.session_id')->where('user_id', Auth::user()->user_id)->count();
+            $total_time = WorkoutSession::select(DB::raw('sum(extract (epoch from duration)) as total_time'))->where('user_id', Auth::user()->user_id)->pluck('total_time')->first();
+            $total_hours = number_format($total_time / 3600, 1);
+            return response()->json([
+                'total_workouts' => $total_workouts,
+                'total_sets' => $total_sets,
+                'total_time' => $total_hours
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch user totals.'
+            ], 403);
+        }
     }
 }
 

@@ -150,7 +150,7 @@ class WorkoutSessionController extends Controller
     }
 
     public function viewActivity(){
-        $date = Carbon::today()->subDays(30);
+        $date = Carbon::today()->subDays(92);
         try {
             $activity = WorkoutSession::select('date', DB::raw('count(*) as count'))->where('user_id', Auth::user()->user_id)->where('date', '>=', $date)->groupBy('date')->get();
             return response()->json([

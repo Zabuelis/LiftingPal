@@ -15,10 +15,13 @@ Route::middleware('guestUser')->group(function (){
 
 // Routes for authenticated users
 Route::middleware('auth:sanctum')->group(function () {
-    // User related routes
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/getUserData', [UserController::class, 'show']);
-    Route::put('/updateBodyStats', [UserController::class, 'updateBodyStats']);
+    // User related routes
+    Route::controller(UserController::class)->group(function (){
+        Route::get('/getUserData', 'show');
+        Route::put('/updateBodyStats', 'updateBodyStats');
+        Route::get('/getUserTotals', 'userTotals');
+    });
 
     // Exercise related routes
     Route::controller(ExerciseController::class)->group(function (){
