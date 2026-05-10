@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('session_id');
             $table->integer('user_id');
             $table->integer('workout_id');
-            $table->dateTime('date', precision: 0);
+            $table->date('date');
             $table->time('duration', precision: 2);
             $table->string('comments')->nullable(true);
             $table->string('caption');

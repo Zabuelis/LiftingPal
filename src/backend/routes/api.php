@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/deleteWorkoutSession/{id}', 'delete');
         Route::put('/updateWorkoutSession/{id}', 'update');
         Route::get('/showWorkoutSession/{id}', 'show');
+        Route::get('/viewActivity', 'viewActivity');
     });
 
 });
