@@ -6,7 +6,7 @@ import ScrollablePage from "../../components/ScrollablePage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link, useFocusEffect } from "expo-router";
 import PressableButton from "../../components/PressableButton";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import StatusIndicator from "../../components/StatusIndicator";
 import ErrorCard from "../../components/GUI/Cards/ErrorCard";
 import { ContributionGraph } from "react-native-chart-kit";
@@ -14,14 +14,20 @@ import api from "../../lib/axios";
 import handleErrorResponse from "../../lib/webErrorMessages";
 import { ChartConfig } from "../../constants/ChartConfig";
 import ThemedView from "../../components/ThemedView";
+import { useWorkoutSessions } from "../../hooks/useWorkoutSessions";
+import { BarChart } from "react-native-gifted-charts";
 
 const Profile = () => {
   const { user, logout } = useUser();
+  const { workoutSessions } = useWorkoutSessions;
   const date = new Date(user.created_at);
   const createdAtYear = date.getFullYear();
   const [webMessageError, setWebMessageError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [bmi, setBmi] = useState(0);
+  const [volume, setVolume] = useState([]);
+  const [dataset, setDataset] = useState([]);
+  const [totalLifted, setTotalLifted] = useState(0);
 
   async function handleLogout() {
     setWebMessageError(null);
@@ -45,9 +51,36 @@ const Profile = () => {
     }
   }
 
+  async function fetchWeeklyVolume() {
+    setIsLoading(true);
+    try {
+      const response = await api.get("/getWeeklyVolume");
+      const volumeData = response.data.weekly_volume;
+      setVolume(volumeData);
+      let week = 1;
+      let data = [];
+      let total = 0;
+      for (let i = 0; i < volumeData.length; i++) {
+        data.push({ value: volumeData[i].volume, label: "W" + week });
+        total += volumeData[i].volume;
+        week++;
+      }
+      setDataset(data);
+      setTotalLifted(total);
+    } catch (error) {
+      setVolume([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     computeBMI();
   }, [user.weight, user.height]);
+
+  useEffect(() => {
+    fetchWeeklyVolume();
+  }, [workoutSessions, user]);
 
   if (isLoading) {
     return (
@@ -153,6 +186,40 @@ const Profile = () => {
               </View>
             </View>
           </View>
+          {volume.length === 4 ? (
+            <View
+              style={{ backgroundColor: Colors.surface }}
+              height={340}
+              className="mt-4 border border-gray-300 rounded-xl"
+            >
+              <View className="p-4 flex-row justify-between">
+                <View>
+                  <ThemedText className="text-xl" bold>
+                    Monthly Volume
+                  </ThemedText>
+                  <ThemedText>Weekly KG Lifted</ThemedText>
+                </View>
+                <View
+                  style={{ backgroundColor: Colors.background }}
+                  className="flex items-center justify-center w-28 rounded-xl border border-gray-300"
+                >
+                  <ThemedText className="text-lg" numberOfLines={1} bold>
+                    {totalLifted} KG
+                  </ThemedText>
+                </View>
+              </View>
+              <View className="pl-4 pt-4">
+                <BarChart
+                  data={dataset}
+                  width={300}
+                  barWidth={50}
+                  frontColor={Colors.theme}
+                  noOfSections={3}
+                  hideRules
+                />
+              </View>
+            </View>
+          ) : null}
           <View className="py-8">
             <PressableButton onPress={handleLogout} className="w-full h-20">
               <ThemedText

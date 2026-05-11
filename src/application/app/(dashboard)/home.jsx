@@ -4,14 +4,14 @@ import PressableButton from "../../components/PressableButton";
 import { useUser } from "../../hooks/useUser";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Pressable, View } from "react-native";
-import { Link, router } from "expo-router";
-import { useEffect, useState } from "react";
+import { Link, router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import StatusIndicator from "../../components/StatusIndicator";
 import api from "../../lib/axios";
 import { useWorkoutSessions } from "../../hooks/useWorkoutSessions";
 import WorkoutSessionCard from "../../components/GUI/Cards/WorkoutSessionCard";
 import ScrollablePage from "../../components/ScrollablePage";
-import { BarChart } from "react-native-gifted-charts";
+import { BarChart, LineChart } from "react-native-gifted-charts";
 
 const Home = () => {
   const { user } = useUser();
@@ -56,24 +56,42 @@ const Home = () => {
   async function getTimeDiff() {
     setIsLoading(true);
     try {
-      const response = await api.get("/getWeekTime");
+      const response = await api.get("/getDailyTime");
       const times = response.data.week_time;
+      const daily = response.data.daily_time;
+      let timeset = [];
       let dataset = [];
       if (times.length != 0) {
         for (let i = 0; i < times.length; i++) {
           if (times[i].time > 0) {
-            dataset.push(parseFloat((times[i].time / 3600).toFixed(2)));
+            timeset.push(parseFloat((times[i].time / 3600).toFixed(2)));
           } else {
-            dataset.push(0);
+            timeset.push(0);
           }
         }
-        setWeekTimeDiff(
-          (((dataset[1] - dataset[0]) / dataset[1]) * 100).toFixed(1),
-        );
-        setWeekTime([
-          { value: dataset[0], label: "Prev. Week" },
-          { value: dataset[1], label: "Curr. Week" },
-        ]);
+        let diff = NaN;
+        if (timeset[0] > 0.1 && timeset[1] > 0.1) {
+          diff = (((timeset[1] - timeset[0]) / timeset[1]) * 100).toFixed(1);
+        }
+
+        setWeekTimeDiff(diff);
+        const weeks = [daily.slice(0, 7), daily.slice(7, 14)];
+        const labels = ["M", "T", "W", "T", "F", "S", "S"];
+        const minMinutes = 300;
+        for (let i = 0; i < weeks.length; i++) {
+          dataset.push(
+            weeks[i].map((day, j) => ({
+              value:
+                day.time > minMinutes
+                  ? parseFloat((day.time / 3600).toFixed(1))
+                  : 0,
+              dataPointText:
+                day.time > minMinutes ? (day.time / 3600).toFixed(1) : 0,
+              label: labels[j],
+            })),
+          );
+        }
+        setWeekTime(dataset);
       }
     } catch (error) {
       setWeekTime({});
@@ -119,7 +137,7 @@ const Home = () => {
         {Object.keys(weekTime).length > 0 ? (
           <View
             style={{ backgroundColor: Colors.surface }}
-            height={320}
+            height={370}
             className="rounded-xl"
           >
             <View className="flex flex-row justify-between p-4">
@@ -128,64 +146,94 @@ const Home = () => {
                   Weekly Time Change
                 </ThemedText>
               </View>
-              <View className="items-end">
-                {weekTimeDiff >= 0 ? (
-                  <View
-                    style={{ backgroundColor: Colors.background }}
-                    className="border flex-1 border-green-500 rounded-xl justify-center items-center w-32"
-                  >
-                    <ThemedText
-                      numberOfLines={1}
-                      style={{ color: Colors.accentText }}
-                      className="text-xl"
+              {!isNaN(weekTimeDiff) ? (
+                <View className="items-end">
+                  {weekTimeDiff >= 0 ? (
+                    <View
+                      style={{ backgroundColor: Colors.background }}
+                      className="border flex-1 border-green-500 rounded-xl justify-center items-center w-32"
                     >
-                      ↑ {weekTimeDiff} %
-                    </ThemedText>
-                  </View>
-                ) : (
-                  <View
-                    style={{ backgroundColor: Colors.background }}
-                    className="border flex-1 border-red-500 rounded-xl justify-center items-center w-32"
-                  >
-                    <ThemedText
-                      numberOfLines={1}
-                      className="text-xl color-red-600"
+                      <ThemedText
+                        numberOfLines={1}
+                        style={{ color: Colors.accentText }}
+                        className="text-xl"
+                      >
+                        ↑ {weekTimeDiff} %
+                      </ThemedText>
+                    </View>
+                  ) : (
+                    <View
+                      style={{ backgroundColor: Colors.background }}
+                      className="border flex-1 border-red-500 rounded-xl justify-center items-center w-32"
                     >
-                      ↓ {weekTimeDiff} %
-                    </ThemedText>
-                  </View>
-                )}
-              </View>
+                      <ThemedText
+                        numberOfLines={1}
+                        style={{ color: "#ff0000" }}
+                        className="text-xl"
+                      >
+                        ↓ {weekTimeDiff} %
+                      </ThemedText>
+                    </View>
+                  )}
+                </View>
+              ) : null}
             </View>
             <View
               style={{ backgroundColor: Colors.accentTheme }}
               width={300}
+              height={250}
               className="flex-row border rounded-xl border-gray-300 items-center justify-center mt-3 pb-2 mx-12"
             >
               <View className="flex justify-end items-end w-16">
                 <ThemedText
                   className="text-center"
                   style={{
-                    color: Colors.theme,
                     transform: [{ rotate: "-90deg" }],
                   }}
                 >
                   Hours
                 </ThemedText>
               </View>
-              <BarChart
-                hideYAxisText
-                yAxisColor="transparent"
-                showValuesAsTopLabel
-                data={weekTime}
-                width={210}
-                barWidth={60}
-                spacing={40}
-                frontColor={Colors.theme}
+              <LineChart
+                data={weekTime[0]}
+                data2={weekTime[1]}
+                spacing={33}
                 hideRules
-                xAxisColor={Colors.theme}
-                xAxisLabelTextStyle={{ color: Colors.theme, fontSize: 14 }}
+                dataPointsColor1="#cbd5e1"
+                dataPointsColor2={Colors.theme}
+                dataPointsRadius={4}
+                textShiftY={+8}
+                textShiftX={+14}
+                textFontSize={13}
+                thickness1={2}
+                thickness2={3}
+                textColor1="#94a3b8"
+                color1="#cbd5e1"
+                color2={Colors.theme}
+                yAxisColor="transparent"
+                textColor2={Colors.theme}
+                hideYAxisText
               />
+            </View>
+            <View className="flex-row pt-4 gap-4 items-center justify-center">
+              <View>
+                <View className="flex-row gap-2 items-center justify-center">
+                  <View
+                    style={{ backgroundColor: "#94a3b8" }}
+                    className="w-8 h-4 rounded-xl"
+                  ></View>
+                  <ThemedText>Previous Week</ThemedText>
+                </View>
+              </View>
+              <View>
+                <View className="flex-row gap-2 items-center justify-center">
+                  <View
+                    style={{ backgroundColor: Colors.theme }}
+                    className="w-8 h-4 rounded-xl"
+                  ></View>
+                  <ThemedText>Current Week</ThemedText>
+                </View>
+              </View>
             </View>
           </View>
         ) : null}
