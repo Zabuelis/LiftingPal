@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/getWeekTime', 'weekTimeDifference');
         Route::get('/getWeeklyVolume', 'weeklyVolume');
         Route::get('/getDailyTime', 'weeklyTimeDifferece');
+        Route::get('/weightDifference', 'weightDifference');
     });
 
     // Exercise related routes

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Weight;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -28,6 +29,14 @@ class AuthController extends Controller
         ]);
 
         $user = User::create($validated);
+
+        if(!is_null($validated['weight'])){
+            Weight::insert([
+                'user_id' => $user->user_id,
+                'date' => date("Y/m/d"),
+                'weight' => $validated['weight']
+            ]);
+        }
 
         $token = $user->createToken($request->name);
 

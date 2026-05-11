@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Weight;
 use App\Models\WorkoutSession;
 use App\Models\WorkoutSet;
 use Illuminate\Support\Facades\Auth;
@@ -36,7 +37,8 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'weight' => 'required|decimal:0,1|lte:1000',
-            'height' => 'required|decimal:0,1|lte:1000'
+            'height' => 'required|decimal:0,1|lte:1000',
+            'date' => 'required|date'
         ]);
 
         try {
@@ -44,6 +46,11 @@ class UserController extends Controller
             ->update([
                 'weight' => $validated['weight'],
                 'height' => $validated['height'],
+            ]);
+            Weight::insert([
+                'user_id' => Auth::user()->user_id,
+                'date' => $validated['date'],
+                'weight' => $validated['weight']
             ]);
             return response()->json([
                 'success' => 'Data updated successfully.'
@@ -103,7 +110,7 @@ class UserController extends Controller
     }
 
     public function weeklyTimeDifferece(){
-        // try {
+        try {
             $week_time = WorkoutSession::select(DB::raw("date_trunc('week', date) as week, sum(extract(epoch from duration)) as time"))
             ->whereRaw("date >= date_trunc('week', NOW() - INTERVAL '1 week')")
             ->where('user_id', Auth::user()->user_id)
@@ -131,11 +138,11 @@ class UserController extends Controller
                 'daily_time' => $daily_time
             ]);
 
-        // } catch (Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'error' => 'Failed to fetch week time difference.'
             ], 403);
-        // }
+        }
     }
 
     public function weeklyVolume(){
@@ -163,6 +170,27 @@ class UserController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'Failed to fetch week time difference.'
+            ], 403);
+        }
+    }
+
+    public function weightDifference(){
+        try {
+            $weight = Weight::select(DB::raw("date_trunc('day', date) as day, ROUND(AVG(weight)::numeric, 1) as weight"))
+            ->where('user_id', Auth::user()->user_id)
+            ->groupBy('day')
+            ->orderBy('day', 'desc')
+            ->limit(14)
+            ->get()
+            ->sortBy('day')
+            ->pluck('weight');
+            
+            return response()->json([
+                'weight' => $weight
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch weight difference.'
             ], 403);
         }
     }
