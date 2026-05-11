@@ -88,11 +88,77 @@ class UserController extends Controller
         try {
             $week_time = WorkoutSession::select(DB::raw("date_trunc('week', date) as week, sum(extract(epoch from duration)) as time"))
             ->whereRaw("date >= date_trunc('week', NOW() - INTERVAL '1 week')")
+            ->where('user_id', Auth::user()->user_id)
             ->groupBy('week')
             ->orderBy('week', 'asc')
             ->get();
             return response()->json([
                 'week_time' => $week_time
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch week time difference.'
+            ], 403);
+        }
+    }
+
+    public function weeklyTimeDifferece(){
+        // try {
+            $week_time = WorkoutSession::select(DB::raw("date_trunc('week', date) as week, sum(extract(epoch from duration)) as time"))
+            ->whereRaw("date >= date_trunc('week', NOW() - INTERVAL '1 week')")
+            ->where('user_id', Auth::user()->user_id)
+            ->groupBy('week')
+            ->orderBy('week', 'asc')
+            ->get();
+
+            $daily_time = DB::select("
+                SELECT 
+                    COALESCE(sum(extract(epoch from workout_session.duration)), 0) as time
+                FROM generate_series(
+                    date_trunc('week', NOW() - INTERVAL '1 week'),
+                    date_trunc('week', NOW() + INTERVAL '1 week') - INTERVAL '1 day',
+                    '1 day'::interval
+                ) as days(day)
+                LEFT JOIN workout_session
+                    on date_trunc('day', workout_session.date) = days.day
+                    AND workout_session.user_id = ?
+                GROUP BY days.day
+                ORDER BY days.day
+            ", [Auth::user()->user_id]);
+
+            return response()->json([
+                'week_time' => $week_time,
+                'daily_time' => $daily_time
+            ]);
+
+        // } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch week time difference.'
+            ], 403);
+        // }
+    }
+
+    public function weeklyVolume(){
+        try {
+            $volume = DB::select("
+                SELECT 
+                    weeks.week,
+                    COALESCE(sum(workout_set.repetitions * workout_set.weight), 0) as volume
+                FROM generate_series(
+                    date_trunc('week', NOW() - INTERVAL '3 weeks'),
+                    date_trunc('week', NOW()),
+                    '1 week'::interval
+                ) as weeks(week)
+                LEFT JOIN workout_session
+                    on date_trunc('week', workout_session.date) = weeks.week
+                    and workout_session.user_id = ?
+                LEFT JOIN workout_set on workout_session.session_id = workout_set.session_id
+                GROUP BY weeks.week
+                ORDER BY weeks.week
+            ", [Auth::user()->user_id]);
+
+            return response()->json([
+                'weekly_volume' => $volume
             ]);
         } catch (Exception $e) {
             return response()->json([
