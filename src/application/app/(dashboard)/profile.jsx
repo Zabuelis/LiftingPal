@@ -249,7 +249,7 @@ const Profile = () => {
               <View className="p-4 flex-row justify-between">
                 <View>
                   <ThemedText className="text-xl" bold>
-                    Weight Change
+                    Body Weight
                   </ThemedText>
                 </View>
               </View>
