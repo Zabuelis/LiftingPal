@@ -15,11 +15,11 @@ import handleErrorResponse from "../../lib/webErrorMessages";
 import { ChartConfig } from "../../constants/ChartConfig";
 import ThemedView from "../../components/ThemedView";
 import { useWorkoutSessions } from "../../hooks/useWorkoutSessions";
-import { BarChart } from "react-native-gifted-charts";
+import { BarChart, LineChart } from "react-native-gifted-charts";
 
 const Profile = () => {
   const { user, logout } = useUser();
-  const { workoutSessions } = useWorkoutSessions;
+  const { workoutSessions } = useWorkoutSessions();
   const date = new Date(user.created_at);
   const createdAtYear = date.getFullYear();
   const [webMessageError, setWebMessageError] = useState(null);
@@ -28,6 +28,7 @@ const Profile = () => {
   const [volume, setVolume] = useState([]);
   const [dataset, setDataset] = useState([]);
   const [totalLifted, setTotalLifted] = useState(0);
+  const [weightDifference, setWeightDifference] = useState([]);
 
   async function handleLogout() {
     setWebMessageError(null);
@@ -74,12 +75,31 @@ const Profile = () => {
     }
   }
 
+  async function fetchWeightDifference() {
+    setIsLoading(true);
+    try {
+      const response = await api.get("/weightDifference");
+      const weight = response.data.weight;
+      let dataset = [];
+      for (let i = 0; i < weight.length; i++) {
+        dataset.push({ value: parseInt(weight[i]), dataPointText: weight[i] });
+      }
+      setWeightDifference(dataset);
+    } catch (error) {
+      console.log(error.message);
+      setWeightDifference([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     computeBMI();
   }, [user.weight, user.height]);
 
   useEffect(() => {
     fetchWeeklyVolume();
+    fetchWeightDifference();
   }, [workoutSessions, user]);
 
   if (isLoading) {
@@ -216,6 +236,33 @@ const Profile = () => {
                   frontColor={Colors.theme}
                   noOfSections={3}
                   hideRules
+                />
+              </View>
+            </View>
+          ) : null}
+          {weightDifference.length > 0 ? (
+            <View
+              style={{ backgroundColor: Colors.surface }}
+              height={340}
+              className="mt-4 border border-gray-300 rounded-xl"
+            >
+              <View className="p-4 flex-row justify-between">
+                <View>
+                  <ThemedText className="text-xl" bold>
+                    Weight Change
+                  </ThemedText>
+                </View>
+              </View>
+              <View className="pt-4 pl-4">
+                <LineChart
+                  data={weightDifference}
+                  width={260}
+                  textShiftY={-8}
+                  dataPointsRadius={4}
+                  textFontSize={13}
+                  dataPointsColor1={Colors.theme}
+                  color1={Colors.theme}
+                  textColor1={Colors.theme}
                 />
               </View>
             </View>

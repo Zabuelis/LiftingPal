@@ -111,14 +111,15 @@ const History = () => {
             <ThemedText bold className="text-3xl">
               HISTORY
             </ThemedText>
-            <View
-              style={{ backgroundColor: Colors.surface }}
-              className="pt-4 border h-80 border-gray-300 rounded-xl"
-            >
-              <ThemedText bold className="mx-4 my-2 text-xl">
-                User Activity - Last 90 Days
-              </ThemedText>
-              {activity && activity.length > 0 ? (
+            {activity && activity.length > 0 ? (
+              <View
+                style={{ backgroundColor: Colors.surface }}
+                className="pt-4 border h-80 border-gray-300 rounded-xl"
+              >
+                <ThemedText bold className="mx-4 my-2 text-xl">
+                  User Activity - Last 90 Days
+                </ThemedText>
+
                 <View className="flex mx-4 items-center">
                   <ContributionGraph
                     values={activity}
@@ -129,8 +130,8 @@ const History = () => {
                     height={210}
                   />
                 </View>
-              ) : null}
-            </View>
+              </View>
+            ) : null}
           </View>
         }
       ></FlatList>

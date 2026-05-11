@@ -64,6 +64,7 @@ export function UserProvider({ children }) {
       const response = await api.put("/updateBodyStats", {
         height,
         weight,
+        date: new Date().toLocaleDateString(),
       });
       getInitialUserValue();
     } catch (error) {
