@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:18.4-trixie
+    container_name: liftingpal-db
+    restart: unless-stopped
+    env_file:
+      - ./src/backend/.env
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - liftingpal-net
+  
+  app:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile
+    container_name: liftingpal-app
+    restart: unless-stopped
+    user: "${WWWUSER:-1000}:${WWWGROUP:-1000}"
+    working_dir: /var/www
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./src/backend
+    env_file:
+      - ./src/backend/.env
+    networks:
+      - liftingpal-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: liftingpal-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./src/backend:var/www
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - liftingpal-net
+
+networks:
+  liftingpal-net:
+    driver: bridge
