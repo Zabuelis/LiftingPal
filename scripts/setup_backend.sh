@@ -29,4 +29,7 @@ sudo docker exec liftingpal-app php artisan key:generate
 sudo docker exec liftingpal-app php artisan storage:link
 sudo docker exec liftingpal-app php artisan migrate:fresh --seed
 
+sudo docker compose --env-file ./src/backend/.env down
+sudo docker compose --env-file ./src/backend/.env up -d --build
+
 echo "Back-end development environment has been successfully deployed..."
