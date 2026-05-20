@@ -16,6 +16,6 @@ cd ../src/application
 
 npm install
 
-echo "Make sure to restart your shell for node and npm installations to take action or else use the abstract path."
-echo "All required dependencies have been installed, now you can run the mobile application DEV server using npx expo start in the ../src/application catalogue."
-echo "For reference checkout https://docs.expo.dev/get-started/set-up-your-environment/"
+echo "All required dependencies have been installed, now you can run the mobile application DEV server using npx expo start or make up in the ../src/application catalogue."
+echo "Make sure to restart your shell for npx installation to take action or else use the abstract path."
+echo "For development environment reference checkout https://docs.expo.dev/get-started/set-up-your-environment/"

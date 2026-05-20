@@ -33,3 +33,4 @@ sudo docker compose --env-file ./src/backend/.env down
 sudo docker compose --env-file ./src/backend/.env up -d --build
 
 echo "Back-end development environment has been successfully deployed..."
+echo "For more convenient stopping and starting make up/down can be used in the ./src/backend/ directory."
