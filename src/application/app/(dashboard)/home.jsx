@@ -195,6 +195,8 @@ const Home = () => {
                 </ThemedText>
               </View>
               <LineChart
+                height={200}
+                maxValue={20}
                 data={weekTime[0]}
                 data2={weekTime[1]}
                 spacing={33}
