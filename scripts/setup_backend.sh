@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # Add Docker's official GPG key:
 sudo apt update
@@ -18,14 +19,14 @@ Signed-By: /etc/apt/keyrings/docker.asc
 EOF
 
 sudo apt update
-sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
 cp ../src/backend/.env.example ../src/backend/.env
 cd ..
-sudo docker compose --env-file ../src/backend/.env up -d --build
+sudo docker compose --env-file ./src/backend/.env up -d --build
 sudo docker exec liftingpal-app composer install
 sudo docker exec liftingpal-app php artisan key:generate
 sudo docker exec liftingpal-app php artisan storage:link
-sudo docker exec liftingpal-app php artisan migrate
+sudo docker exec liftingpal-app php artisan migrate:fresh --seed
 
 echo "Back-end development environment has been successfully deployed..."
